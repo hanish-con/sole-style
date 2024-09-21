@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Menu, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export default function Header() {
     const [state, setState] = React.useState(false)
@@ -14,7 +15,7 @@ export default function Header() {
     ]
     return (
         <header>
-            <nav className="bg-white w-full border-b md:border-0">
+            <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100">
                 <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
                     <div className="flex items-center justify-between py-3 md:py-5 md:block">
                         <Link to="/">
@@ -39,13 +40,8 @@ export default function Header() {
                                     <Link to={item.path}>{item.title}</Link>
                                 </li>
                             ))}
-                            <form className="flex items-center  space-x-2 border rounded-md p-2">
-                                <Search className="h-5 w-5 flex-none text-gray-300" />
-                                <input
-                                    className="w-full outline-none appearance-none placeholder-gray-500 text-gray-500 sm:w-auto"
-                                    type="text"
-                                    placeholder="Search"
-                                />
+                            <form>
+                                <Input type="text" placeholder="Search" />
                             </form>
                         </ul>
                     </div>
