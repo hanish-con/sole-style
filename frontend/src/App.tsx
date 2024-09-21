@@ -4,6 +4,7 @@ import './App.css'
 import { Button } from './components/ui/button'
 import { LoginForm } from './pages/login'
 import { SignUpForm } from "./pages/signup";
+import { NotFound } from "./pages/fallback";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route index element={<LoginForm />}></Route>
         <Route path="/signup" element={<SignUpForm />}></Route>
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
 
   )
