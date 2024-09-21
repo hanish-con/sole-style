@@ -9,9 +9,9 @@ export default function Header() {
 
     const menus = [
         { title: "Home", path: "/home" },
-        { title: "Blog", path: "/your-path" },
-        { title: "About Us", path: "/your-path" },
-        { title: "Contact Us", path: "/your-path" },
+        { title: "Products", path: "/products" },
+        { title: "About", path: "/about" },
+        { title: "Contact", path: "/contact" },
     ]
     return (
         <header>
