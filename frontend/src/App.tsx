@@ -6,7 +6,7 @@ import { SignUpForm } from "./pages/signup";
 import { NotFound } from "./pages/fallback";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
-import Home from "./pages/home";
+import MainApp from "./pages/main";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path="/">
           <Route index element={<LoginForm />}></Route>
           <Route path="/signup" element={<SignUpForm />}></Route>
-          <Route path="/home" element={<Home />}></Route>
+          <Route path="/home" element={<MainApp />}></Route>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

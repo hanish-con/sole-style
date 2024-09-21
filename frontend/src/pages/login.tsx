@@ -16,7 +16,7 @@ export const description =
 
 export function LoginForm() {
     return (
-        <div className="form-center">
+        <div className="form-card">
             <Card className="mx-auto max-w-sm">
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
