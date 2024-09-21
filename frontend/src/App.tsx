@@ -1,11 +1,19 @@
+import React from "react";
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import { Button } from './components/ui/button'
+import { LoginForm } from './pages/login'
+import { SignUpForm } from "./pages/signup";
 
 function App() {
   return (
-    <>
-      <Button>Click here</Button>
-    </>
+    <Routes>
+      <Route path="/">
+        <Route index element={<LoginForm />}></Route>
+        <Route path="/signup" element={<SignUpForm />}></Route>
+      </Route>
+    </Routes>
+
   )
 }
 
