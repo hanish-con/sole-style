@@ -4,7 +4,8 @@ export default function Home() {
     return (
         <div className="home">
             <section className="hero">
-                <img height={"500px"} width={"500px"} className=" hero-image" src="/assets/img/hero.png" />
+            {/* PNG Designed By niazmorshed from https://pngtree.com/freepng/sneakers-running-fashion-sports-shoe_16213982.html?sol=downref&id=bef */}
+                <img className=" hero-image" src="/assets/img/hero.png" />
                 <div className="hero-intro">
                     <h2 className="text-9xl font-bold">Summer Collection</h2>
                     <h2 className="text-5xl mt-4 font-bold">2024</h2>

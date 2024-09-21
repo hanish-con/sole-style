@@ -19,7 +19,7 @@
 }
 
 .hero-image {
-  grid-column: 7 / -1;
+  grid-column: 7 / 11;
   grid-row: 1 / 2;
   align-self: center;
 }
