@@ -6,18 +6,22 @@ import { SignUpForm } from "./pages/signup";
 import { NotFound } from "./pages/fallback";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
+import Home from "./pages/home";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ModeToggle />
+      {/* <div className="app"> */}
       <Routes>
         <Route path="/">
           <Route index element={<LoginForm />}></Route>
           <Route path="/signup" element={<SignUpForm />}></Route>
+          <Route path="/home" element={<Home />}></Route>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      {/* </div> */}
     </ThemeProvider>
 
   )
