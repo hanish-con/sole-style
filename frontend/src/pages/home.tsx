@@ -7,8 +7,8 @@ export default function Home() {
                 <img height={"500px"} width={"500px"} className=" hero-image" src="/assets/img/hero.png" />
                 <div className="hero-intro">
                     <h2 className="text-9xl font-bold">Summer Collection</h2>
-                    <h2 className="text-5xl mt-4 font-bold">2022</h2>
-                    <p className="text-lg leading-normal mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi possimus similique, officiis molestias quae eaque maiores asperiores reiciendis eius ut recusandae debitis. Dolorem ducimus laborum molestias porro minima qui possimus.
+                    <h2 className="text-5xl mt-4 font-bold">2024</h2>
+                    <p className="text-lg leading-relaxed mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi possimus similique, officiis molestias quae eaque maiores asperiores reiciendis eius ut recusandae debitis. Dolorem ducimus laborum molestias porro minima qui possimus.
                     Fuga ipsum fugit unde temporibus, quaerat soluta praesentium veniam eveniet libero aut nostrum non qui? Sunt perferendis corrupti voluptatibus. Sunt sit doloribus illo dignissimos non excepturi incidunt optio ut ab.</p>
                     <Button className="call-to-action mt-8 rounded font-bold" size={"lg"}>SHOP NOW</Button>
                 </div>

@@ -8,18 +8,18 @@
 }
 
 .hero {
-  margin: 2rem 10rem;
+  /* margin: 2rem 10rem; */
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(11, 1fr);
 }
 
 /* https://www.youtube.com/watch?v=HFG3BKOqOlE */
 .hero-intro {
-  grid-column: 1 / 4;
+  grid-column: 3 / 9;
 }
 
 .hero-image {
-  grid-column: 3 / -1;
+  grid-column: 7 / -1;
   grid-row: 1 / 2;
   align-self: center;
 }
