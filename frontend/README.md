@@ -11,9 +11,92 @@ An awesome ecommerce store for shoes for everyone written using React + TypeScri
 `npm run dev`
 
 
-## Contribute
+## Contributor Guide
 - Create an issue in the issues with a description of what we are trying to add or fix
 - Pull from main branch
 - Create a new branch. Use `feat/` prefix for feature and `fix/` prefix for bugs. Eg: branch name `feat/login-form` or something nice.
 - Push to the remote branch 
 - Create a PR to fix the respective issue.
+- **Donot push to the main branch**
+
+
+## Database Schema
+* User
+```
+    User {
+        id: String,
+        firstName: String,
+        lastName: String,
+        email: String primary key,
+        password: String,
+        role: {
+            type: Role,
+            default: User,
+        },
+        address: Address,
+    }
+
+    Address {
+        street: "String",
+        city: "String",
+        state: "String",
+        postal_code: "String"
+    }
+
+    Role {
+        User,
+        Admin
+    }
+```
+
+* Product
+```
+    Product {
+        id: String,
+        category: Category,
+        imageAlt: String,
+        imageSrc: String,
+        name: String,
+        description: String,
+        color: String,
+        price: Decimal,
+        rating: 4,
+        stock: Number,
+    }
+
+    Category {
+        id: String,
+        name: String,
+        title: String,
+    }
+```
+
+* Order
+```
+    Order {
+        id: String,
+        userId: String,
+        orderDate: Date,
+        status: {
+            type: OrderStatus,
+            default: Pending,
+        },
+        total_amount: Number,
+        OrderItems: OrderItem[],
+
+    }
+
+    OrderItem {
+        productId: String,
+        productName: String,
+        quantity: Number,
+        price: Number,
+    }
+
+    OrderStatus {
+        Pending,
+        Returned,
+        Shipped,
+        Completed,
+    }
+```
