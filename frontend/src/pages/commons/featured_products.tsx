@@ -1,15 +1,42 @@
 export default function FeaturedProducts() {
-    const products = Array(4).fill(
+    const products = [
         {
             id: 1,
             imageAlt: "product image",
-            imageSrc: "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
+            imageSrc: "https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/a0ecccf5b6b696d9f18cc8d6b19baf90.jpg",
             href: "#",
-            name: "Men's tees",
+            name: "Men's sneaker",
+            color: "white",
+            price: "20",
+        },
+        {
+            id: 2,
+            imageAlt: "product image",
+            imageSrc: "https://m.media-amazon.com/images/I/61obzQCZ9rL._AC_UL480_FMwebp_QL65_.jpg",
+            href: "#",
+            name: "Men's sneaker",
+            color: "white",
+            price: "20",
+        },
+        {
+            id: 3,
+            imageAlt: "product image",
+            imageSrc: "https://m.media-amazon.com/images/I/81axS2m8f3L._AC_UL480_FMwebp_QL65_.jpg",
+            href: "#",
+            name: "Men's sneaker",
+            color: "white",
+            price: "20",
+        },
+        {
+            id: 4,
+            imageAlt: "product image",
+            imageSrc: "https://m.media-amazon.com/images/I/71DGLwIueyL._AC_UL480_FMwebp_QL65_.jpg",
+            href: "#",
+            name: "Men's sneaker",
             color: "white",
             price: "20",
         }
-    ).map(x => ({ ...x, id: (Math.random() * 100) }));
+    ];
     // aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80
     // h-full w-full object-cover object-center lg:h-full lg:w-full
     return (
@@ -27,7 +54,7 @@ export default function FeaturedProducts() {
                                         height={"330"}
                                         alt={product.imageAlt}
                                         src={product.imageSrc}
-                                        className="h-auto w-auto object-cover transition-on-all hover:scale-110 aspect-[3/4]  delay-100 duration-100 ease-in-out"
+                                        className="h-auto w-auto object-cover transition-on-all hover:scale-110 aspect-[3/3]  delay-100 duration-100 ease-in-out"
                                     />
                                 </div>
                                 <div className="mt-4 flex justify-between">
