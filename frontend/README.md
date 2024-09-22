@@ -21,7 +21,7 @@ An awesome ecommerce store for shoes for everyone written using React + TypeScri
 - Push to the remote branch
     `git push -u origin feat/some-feature`
 - Create a PR to fix the respective issue.
-- **Donot push to the main branch**
+- ⚠️ **Donot push to the main branch**
 
 
 ## Database Schema
