@@ -14,8 +14,12 @@ An awesome ecommerce store for shoes for everyone written using React + TypeScri
 ## Contributor Guide
 - Create an issue in the issues with a description of what we are trying to add or fix
 - Pull from main branch
+    `git checkout main`
+    `git pull origin main`
 - Create a new branch. Use `feat/` prefix for feature and `fix/` prefix for bugs. Eg: branch name `feat/login-form` or something nice.
-- Push to the remote branch 
+    `git checkout -b feat/some-feature`
+- Push to the remote branch
+    `git push -u origin feat/some-feature`
 - Create a PR to fix the respective issue.
 - **Donot push to the main branch**
 
