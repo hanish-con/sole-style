@@ -11,6 +11,8 @@
   /* margin: 2rem 10rem; */
   display: grid;
   grid-template-columns: repeat(11, 1fr);
+  background: ivory;
+  padding-block: 2rem;
 }
 
 /* https://www.youtube.com/watch?v=HFG3BKOqOlE */
@@ -26,4 +28,26 @@
 
 .hero-intro, .hero-image {
   grid-row: 1 / 2;
+}
+
+.hero2 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding-block: 2rem;
+  background: linear-gradient(90deg, rgba(148,25,120,1) 0%, rgba(202,50,108,1) 23%, rgba(239,94,92,1) 40%, rgba(255,144,80,1) 55%, rgba(255,196,82,1) 78%, rgba(249,248,113,1) 100%);
+  /* background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%); */
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+
+  background: rgb(238,174,202);
+  background: linear-gradient(90deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+
+}
+
+.hero-intro2 {
+  grid-column: 2 / 5;
+  align-self: center;
+}
+
+.hero-image2 {
+  grid-column: 5 / -1;
 }
