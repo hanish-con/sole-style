@@ -36,7 +36,7 @@ export default function Header() {
                     >
                         <ul className="justify-center items-center space-y-8 md:flex md:space-x-6 md:space-y-0">
                             {menus.map((item, idx) => (
-                                <li key={idx} className="text-gray-600 hover:text-indigo-600">
+                                <li key={idx} className="text-gray-600 hover:text-violet-600">
                                     <Link to={item.path}>{item.title}</Link>
                                 </li>
                             ))}

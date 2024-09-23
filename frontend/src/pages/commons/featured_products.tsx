@@ -59,13 +59,12 @@ export default function FeaturedProducts() {
                                 </div>
                                 <div className="mt-4 flex justify-between">
                                     <div>
-                                        <h3 className="text-sm">
-                                            {/* <span aria-hidden="true" className="absolute inset-0" /> */}
+                                        <h3 className="text-lg">
                                             {product.name}
                                         </h3>
-                                        <p className="mt-1 text-sm">{product.color}</p>
+                                        <p className="mt-1 text-sm text-gray-500">{product.color}</p>
                                     </div>
-                                    <p className="text-sm font-medium">{product.price}</p>
+                                    <p className="text-2xl font-medium"><span className="text-base font-bold">$ </span>{product.price}</p>
                                 </div>
                             </a>
                         </div>

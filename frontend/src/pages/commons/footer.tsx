@@ -1,5 +1,6 @@
 export default function Footer() {
     return (
+        // https://flowbite.com/docs/components/footer/
         <footer class="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100">
             <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
             <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8 grid justify-center">
