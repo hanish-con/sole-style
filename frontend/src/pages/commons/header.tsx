@@ -11,6 +11,7 @@ export default function Header() {
     const menus = [
         { title: "Home", path: "/" },
         { title: "Products", path: "/products" },
+        { title: "Cart", path: "/cart" },
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
     ]
