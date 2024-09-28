@@ -1,11 +1,12 @@
 
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function Header() {
     const [state, setState] = React.useState(false)
+    const navigate = useNavigate();
 
     const menus = [
         { title: "Home", path: "/home" },
@@ -13,6 +14,11 @@ export default function Header() {
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
     ]
+
+    const logout = (e) => {
+        // TODO: handle logout
+        navigate("/login");
+    }
     return (
         <header>
             <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100">
@@ -40,6 +46,9 @@ export default function Header() {
                                     <Link to={item.path}>{item.title}</Link>
                                 </li>
                             ))}
+                            <li key="logout" className="text-gray-600 hover:text-violet-600">
+                                    <button onClick={logout}>Logout</button>
+                            </li>
                             <form>
                                 <Input type="text" placeholder="Search" />
                             </form>
