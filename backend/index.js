@@ -14,6 +14,16 @@ app.get("/", (req, res) => {
   res.json({ message: "hello from app root" });
 });
 
+const verifyToken = (req, res, next) => {
+  console.log({ headers: req.headers });
+  const token = req.headers['Authorization'];
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized"});
+  }
+  // set user details here
+  next();
+}
+
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   // console.log({ data: req.body });
@@ -47,7 +57,13 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-app.get("/products", async (req, res) => {
+app.get("/products", verifyToken, async (req, res) => {
+  const products = await Product.find({});
+  return res.json(products);
+});
+
+app.get("/featured-products", verifyToken, async (req, res) => {
+  // get featured products somehow
   const products = await Product.find({});
   return res.json(products);
 });
