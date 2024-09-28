@@ -8,4 +8,4 @@ $ npm i
 ```
 
 ## Run
-`npm start`
+`$ npm start`
