@@ -13,7 +13,7 @@ import Home from "./pages/home";
 function App() {
   const [token, setToken] = useState("");
   const location = useLocation();
-  console.log({ location });
+  // console.log({ location });
 
   // check if the path is allowed to show header and footer
   // TODO: think of a better way to show header and footer
