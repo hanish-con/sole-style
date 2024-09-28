@@ -23,7 +23,7 @@ const formSchema = z.object({
   firstName: z.string(),
   lastName: z.string().optional(),
   email: z.string().email(),
-  password: z.string({ required_error: "Password is required" }),
+  password: z.string({ required_error: "Password is required" }).min(6),
 });
 
 export function SignUpForm() {
@@ -32,7 +32,10 @@ export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: "",
       lastName: "",
+      email: "",
+      password: "",
     },
   })
 
@@ -137,6 +140,7 @@ export function SignUpForm() {
                         <Input
                           id="password"
                           type="password"
+                          placeholder="6+ characters"
                           required
                           {...field}
                         />

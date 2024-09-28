@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form"
 
 const formSchema = z.object({
     email: z.string().email(),
-    password: z.string({ required_error: "Password is required"}),
+    password: z.string({ required_error: "Password is required"}).min(6),
 })
 
 
@@ -29,6 +29,8 @@ export function LoginForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            email: "",
+            password: "",
         },
     })
     const [loginError, setLoginError] = useState("");
@@ -91,7 +93,7 @@ export function LoginForm() {
                                                 </Link>
                                             </div>
                                             <FormControl>
-                                                <Input id="password" type="password" {...field} required />
+                                                <Input id="password" type="password" placeholder="6+ characters" {...field} required />
 
                                             </FormControl>
                                             <FormMessage className="flex" />
