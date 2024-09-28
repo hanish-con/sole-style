@@ -15,9 +15,9 @@ function App() {
       {/* <div className="app"> */}
       <Routes>
         <Route path="/">
-          <Route index element={<LoginForm />}></Route>
+          <Route index element={<MainApp />}></Route>
+          <Route path="/login" element={<LoginForm />}></Route>
           <Route path="/signup" element={<SignUpForm />}></Route>
-          <Route path="/home" element={<MainApp />}></Route>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
