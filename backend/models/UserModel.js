@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 const Schema = mongoose.Schema;
 
 // Define the User schema
@@ -50,16 +51,18 @@ const userSchema = new Schema({
   }
 });
 
-// Hash the password before saving the user to the database
-userSchema.pre('save', async function (next) {
-  const user = this;
-  if (user.isModified('password')) {
-    // Implement password hashing here, e.g., with bcrypt
-    // const salt = await bcrypt.genSalt(10);
-    // user.password = await bcrypt.hash(user.password, salt);
-  }
-  next();
-});
+
+// // Hash the password before saving the user to the database
+// userSchema.pre('save', async function (next) {
+//   const user = this;
+//   if (user.isModified('password')) {
+//     // Implement password hashing here, e.g., with bcrypt
+//     // const salt = await bcrypt.genSalt(10);
+//     // user.password = await bcrypt.hash(user.password, salt);
+//   }
+//   next();
+// });
 
 // Create and export the User model
-module.exports = mongoose.model('User', userSchema);
+// module.exports = mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);

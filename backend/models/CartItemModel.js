@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 const Schema = mongoose.Schema;
 
 // Define the CartItem schema
@@ -20,4 +21,5 @@ const cartItemSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('CartItem', cartItemSchema);
+// module.exports = mongoose.model('CartItem', cartItemSchema);
+export const CartItem = mongoose.model('CartItem', cartItemSchema);

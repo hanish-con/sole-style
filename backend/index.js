@@ -3,6 +3,7 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import {} from "./models/db.js";
 import { User } from "./models/schema.js";
+import { Product } from "./models/ProductModel.js";
 
 const app = express();
 
@@ -44,6 +45,11 @@ app.post("/login", async (req, res) => {
   }
   const token = "123456789";
   res.status(200).json({ token });
+});
+
+app.get("/products", async (req, res) => {
+  const products = await Product.find({});
+  return res.json(products);
 });
 
 const PORT = process.env.PORT || 3002;

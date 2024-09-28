@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 const Schema = mongoose.Schema;
 
 // Define the Payment schema
@@ -32,4 +33,4 @@ const paymentSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('Payment', paymentSchema);
+export const Payment = mongoose.model('Payment', paymentSchema);
