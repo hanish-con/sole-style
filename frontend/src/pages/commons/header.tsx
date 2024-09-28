@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function Header() {
@@ -9,7 +9,7 @@ export default function Header() {
     const navigate = useNavigate();
 
     const menus = [
-        { title: "Home", path: "/home" },
+        { title: "Home", path: "/" },
         { title: "Products", path: "/products" },
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
