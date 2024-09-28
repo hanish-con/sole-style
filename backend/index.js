@@ -53,6 +53,7 @@ app.post("/login", async (req, res) => {
   if (!passwordMatch) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
+  // TODO: use jwt token or something ?
   const token = "123456789";
   res.status(200).json({ token });
 });
