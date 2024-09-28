@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FormEvent } from "react";
-import registerUser from "@/utils/api";
 import { UserModel } from "@/models/user";
+import { registerUser } from "@/utils/api";
 
 export const description =
   "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account"
@@ -26,7 +26,9 @@ export function SignUpForm() {
     console.log({ form, data });
     const res = await registerUser((data as unknown) as UserModel);
     // console.log({ res });
-    if (res?.error === "User already exists") {
+    // handle error
+    if (!res.ok) {
+      console.log({ status_code: res.status});
       return;
     }
     navigate("/login");
