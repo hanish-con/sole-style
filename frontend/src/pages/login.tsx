@@ -23,7 +23,7 @@ const formSchema = z.object({
 })
 
 
-export function LoginForm() {
+export function LoginForm({ callback }) {
     const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +46,9 @@ export function LoginForm() {
             form.setError("password", { message: ""});
             return;
         }
+
+        const { token } = await res.json();
+        callback(token);
         navigate("/");
         return;
     }

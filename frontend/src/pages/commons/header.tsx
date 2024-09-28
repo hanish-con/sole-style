@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-export default function Header() {
+export default function Header({ callback }: { callback: (_: string) => void}) {
     const [state, setState] = React.useState(false)
     const navigate = useNavigate();
 
@@ -17,8 +17,9 @@ export default function Header() {
     ]
 
     const logout = (e) => {
-        // TODO: handle logout
-        navigate("/login");
+        // unset token
+        callback("");
+        navigate("/login", { replace: true });
     }
     return (
         <header>
