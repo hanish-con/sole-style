@@ -16,7 +16,7 @@ export const description =
 
 export function LoginForm() {
     return (
-        <div className="form-card">
+        <form className="form-card">
             <Card className="mx-auto max-w-sm">
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
@@ -29,6 +29,7 @@ export function LoginForm() {
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
+                                name="email"
                                 id="email"
                                 type="email"
                                 placeholder="m@example.com"
@@ -42,7 +43,7 @@ export function LoginForm() {
                                     Forgot your password?
                                 </Link>
                             </div>
-                            <Input id="password" type="password" required />
+                            <Input name="password" id="password" type="password" required />
                         </div>
                         <Button type="submit" className="w-full">
                             Login
@@ -61,6 +62,6 @@ export function LoginForm() {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </form>
     )
 }
