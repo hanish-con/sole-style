@@ -24,22 +24,17 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  phone: {
-    type: String,
-    required: true,
-    trim: true
-  },
   address: {
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    zipCode: { type: String, required: true },
-    country: { type: String, required: true }
+    street: { type: String, default: "" },
+    city: { type: String, default: "" },
+    state: { type: String, default: "" },
+    zipCode: { type: String, default: "" },
+    country: { type: String, default: "" }
   },
   role: {
     type: String,
-    enum: ['customer', 'admin'],
-    default: 'customer'
+    enum: ['Admin', 'User'],
+    default: 'User'
   },
   createdAt: {
     type: Date,
@@ -64,5 +59,4 @@ const userSchema = new Schema({
 // });
 
 // Create and export the User model
-// module.exports = mongoose.model('User', userSchema);
 export const User = mongoose.model('User', userSchema);

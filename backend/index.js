@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import {} from "./models/db.js";
-import { User } from "./models/schema.js";
+import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
 
 const app = express();
