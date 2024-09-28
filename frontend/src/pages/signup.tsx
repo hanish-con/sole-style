@@ -10,80 +10,159 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormEvent } from "react";
+import { useState } from "react";
+import { z } from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
 import { UserModel } from "@/models/user";
 import { registerUser } from "@/utils/api";
 
-export const description =
-  "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account"
+const formSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string().optional(),
+  email: z.string().email(),
+  password: z.string({ required_error: "Password is required" }),
+});
 
 export function SignUpForm() {
   const navigate = useNavigate();
-  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
-    evt.preventDefault();
-    const form = evt.target;
-    const data = Object.fromEntries(new FormData(form as HTMLFormElement).entries());
-    console.log({ form, data });
-    const res = await registerUser((data as unknown) as UserModel);
+  const [signUpError, setSignUpError] = useState("");
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      lastName: "",
+    },
+  })
+
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log({ values });
+    const res = await registerUser((values as unknown) as UserModel);
     // console.log({ res });
-    // handle error
     if (!res.ok) {
-      console.log({ status_code: res.status});
+      const { error } = await res.json();
+      console.log({ status_code: res.status, error });
+      setSignUpError(error);
+      form.setError("email", {message: ""});
       return;
     }
     navigate("/login");
     return;
   }
+
   return (
-    <form className="form-card" onSubmit={handleSubmit}>
-      <Card className="mx-auto max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">Sign Up</CardTitle>
-          <CardDescription>
-            Enter your information to create an account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="first-name">First name</Label>
-                <Input name="firstName" id="first-name" placeholder="Max" required />
+    <Form {...form}>
+      <form className="form-card" onSubmit={form.handleSubmit(handleSubmit)}>
+        <Card className="mx-auto max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-xl">Sign Up</CardTitle>
+            <CardDescription>
+              Enter your information to create an account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex" htmlFor="firstName">First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="first-name"
+                            placeholder="Max"
+                            required
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="flex" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex" htmlFor="lastName">Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="last-name"
+                            placeholder="Planck"
+                            required
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="flex" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="last-name">Last name</Label>
-                <Input name="lastName" id="last-name" placeholder="Robinson" required />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex" htmlFor="email">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="m@example.com"
+                          required
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="flex" />
+                    </FormItem>
+                  )}
+                />
               </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex" htmlFor="password">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          id="password"
+                          type="password"
+                          required
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="flex" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              { signUpError && <FormMessage>{ signUpError }</FormMessage>}
+              <Button type="submit" className="w-full">
+                Create an account
+              </Button>
+              <Button variant="outline" className="w-full">
+                Sign up with GitHub
+              </Button>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                name="email"
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
+            <div className="mt-4 text-center text-sm">
+              Already have an account?{" "}
+              <Link to="/" className="underline">
+                Sign in
+              </Link>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input name="password" id="password" type="password" />
-            </div>
-            <Button type="submit" className="w-full">
-              Create an account
-            </Button>
-            <Button variant="outline" className="w-full">
-              Sign up with GitHub
-            </Button>
-          </div>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link to="/" className="underline">
-              Sign in
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+          </CardContent>
+        </Card>
+      </form>
+    </Form>
   )
 }

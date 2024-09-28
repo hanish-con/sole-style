@@ -17,9 +17,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-export const description =
-    "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
-
 const formSchema = z.object({
     email: z.string().email(),
     password: z.string({ required_error: "Password is required"}),
