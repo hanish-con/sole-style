@@ -6,7 +6,6 @@ import { SignUpForm } from "./pages/signup";
 import { NotFound } from "./pages/fallback";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
-import MainApp from "./pages/main";
 import Header from "./pages/commons/header";
 import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
