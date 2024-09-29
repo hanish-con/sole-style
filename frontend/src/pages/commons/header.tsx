@@ -3,8 +3,9 @@ import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function Header({ callback }: { callback: (_: string) => void}) {
+export default function Header({ callback }: { callback: (_: string) => void }) {
     const [state, setState] = React.useState(false)
     const navigate = useNavigate();
 
@@ -49,12 +50,24 @@ export default function Header({ callback }: { callback: (_: string) => void}) {
                                 </li>
                             ))}
                             <li key="logout" className="text-gray-600 hover:text-violet-600">
-                                    <button onClick={logout}>Logout</button>
+                                <button onClick={logout}>Logout</button>
                             </li>
                             <form>
                                 <Input type="text" placeholder="Search" />
                             </form>
+                            <li key="login" className="text-gray-600 hover:text-violet-600">
+                                <Link to="/login">Login</Link>
+                            </li>
+                            <li key="signup" className="text-gray-600 hover:text-violet-600">
+                                <Link to="/signup">SignUp</Link>
+                            </li>
                         </ul>
+                    </div>
+                    <div>
+                        <Avatar>
+                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
                     </div>
                 </div>
             </nav>
