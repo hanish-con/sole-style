@@ -23,7 +23,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ModeToggle />
-      { (token || is_allowed(location.pathname)) &&  <Header callback={(t: string) => setToken(t)} /> }
+      { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> }
       <Routes>
         <Route path="/">
           <Route index element={<Home />}></Route>
