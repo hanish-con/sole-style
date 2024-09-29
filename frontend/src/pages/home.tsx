@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import FeaturedProducts from "./commons/featured_products";
+import Brands from "./commons/brands";
 
 export default function Home() {
     return (
@@ -26,6 +27,7 @@ export default function Home() {
             <section className="featured">
                 <FeaturedProducts />
             </section>
+            <Brands />
         </div>
     );
 }
