@@ -108,11 +108,11 @@ export function LoginForm({ callback }) {
                             <Button type="submit" className="w-full">
                                 Login
                             </Button>
-                            <Button variant="outline" className="w-full">
+                            {/* <Button variant="outline" className="w-full">
                                 <Link to="/">
                                     Login with Google
                                 </Link>
-                            </Button>
+                            </Button> */}
                         </div>
                         <div className="mt-4 text-center text-sm">
                             Don&apos;t have an account?{" "}
