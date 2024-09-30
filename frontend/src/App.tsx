@@ -18,7 +18,8 @@ function App() {
   // check if the path is allowed to show header and footer
   // TODO: think of a better way to show header and footer
   const is_allowed = (path: string) => {
-    return path === "/";
+    // don't show header and footer for /login and /signup
+    return !(path === "/login" || path === "/signup");
   }
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
