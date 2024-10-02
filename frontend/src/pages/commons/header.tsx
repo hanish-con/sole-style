@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import SoleStyleLogo from '../../assets/SoleStyleLogoNew.svg';
 
 export default function Header({ callback }: { callback: (_: string) => void }) {
     const [state, setState] = React.useState(false)
@@ -28,7 +29,11 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
                 <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
                     <div className="flex items-center justify-between py-3 md:py-5 md:block">
                         <Link to="/">
-                            <h1 className="text-3xl font-bold text-purple-600">Logo</h1>
+                            <img
+                                src={SoleStyleLogo}
+                                alt="Logo"
+                                className="h-24 w-auto"
+                            />
                         </Link>
                         <div className="md:hidden">
                             <button
