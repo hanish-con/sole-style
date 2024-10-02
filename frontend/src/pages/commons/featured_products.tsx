@@ -1,12 +1,14 @@
+import img1 from './footwear-5408643_1280.jpg';
+
 export default function FeaturedProducts() {
     const products = [
         {
             id: 1,
             imageAlt: "product image",
-            imageSrc: "https://img.freepik.com/premium-photo/white-sneaker-colored-background-with-copy-space_301038-669.jpg",
+            imageSrc: img1,
             href: "#",
-            name: "Women's sneaker",
-            color: "white",
+            name: "Men's sneaker",
+            color: "Black",
             price: "19.99",
         },
         {
