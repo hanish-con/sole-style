@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// Define the Product schema
+
 const productSchema = new Schema({
   name: {
     type: String,
@@ -16,7 +16,7 @@ const productSchema = new Schema({
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'Category', // Assuming you have a Category model
+    ref: 'Category',
     required: true
   },
   price: {
@@ -31,7 +31,7 @@ const productSchema = new Schema({
   },
   images: [
     {
-      type: String // Array of image file paths or URLs
+      type: String 
     }
   ],
   createdAt: {
@@ -44,5 +44,4 @@ const productSchema = new Schema({
   }
 });
 
-// Create and export the Product model
 export const Product = mongoose.model('Product', productSchema);

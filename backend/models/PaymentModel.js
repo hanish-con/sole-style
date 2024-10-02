@@ -2,11 +2,10 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// Define the Payment schema
 const paymentSchema = new Schema({
   orderId: {
     type: Schema.Types.ObjectId,
-    ref: 'Order', // Assuming you have an Order model
+    ref: 'Order', 
     required: true
   },
   paymentMethod: {

@@ -2,18 +2,18 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// Define the Order schema
+
 const orderSchema = new Schema({
   customerId: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Assuming you have a User model
+    ref: 'User', 
     required: true
   },
   items: [
     {
       productId: {
         type: Schema.Types.ObjectId,
-        ref: 'Product', // Assuming you have a Product model
+        ref: 'Product', 
         required: true
       },
       quantity: {
@@ -46,7 +46,7 @@ const orderSchema = new Schema({
   },
   paymentId: {
     type: Schema.Types.ObjectId,
-    ref: 'Payment' // Assuming you have a Payment model
+    ref: 'Payment' 
   },
   createdAt: {
     type: Date,

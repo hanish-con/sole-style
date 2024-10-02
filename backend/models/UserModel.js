@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// Define the User schema
+
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -58,5 +58,5 @@ const userSchema = new Schema({
 //   next();
 // });
 
-// Create and export the User model
+
 export const User = mongoose.model('User', userSchema);

@@ -2,16 +2,15 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-// Define the Review schema
 const reviewSchema = new Schema({
   productId: {
     type: Schema.Types.ObjectId,
-    ref: 'Product', // Assuming you have a Product model
+    ref: 'Product', 
     required: true
   },
   customerId: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Assuming you have a User model
+    ref: 'User', 
     required: true
   },
   rating: {
