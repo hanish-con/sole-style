@@ -1,11 +1,9 @@
-import img1 from './footwear-5408643_1280.jpg';
-
 export default function FeaturedProducts() {
     const products = [
         {
             id: 1,
             imageAlt: "product image",
-            imageSrc: img1,
+            imageSrc: "/assets/img/shoe1.jpg",
             href: "#",
             name: "Men's sneaker",
             color: "Black",
