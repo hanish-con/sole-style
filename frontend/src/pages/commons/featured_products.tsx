@@ -3,10 +3,10 @@ export default function FeaturedProducts() {
         {
             id: 1,
             imageAlt: "product image",
-            imageSrc: "https://img.freepik.com/premium-photo/white-sneaker-colored-background-with-copy-space_301038-669.jpg",
+            imageSrc: "/assets/img/shoe1.jpg",
             href: "#",
-            name: "Women's sneaker",
-            color: "white",
+            name: "Men's sneaker",
+            color: "Black",
             price: "19.99",
         },
         {
