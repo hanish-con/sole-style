@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the OrderItem schema
 const orderItemSchema = new Schema({
   orderId: {
     type: Schema.Types.ObjectId,
-    ref: 'Order', // Assuming you have an Order model
+    ref: 'Order',
     required: true
   },
   productId: {
     type: Schema.Types.ObjectId,
-    ref: 'Product', // Assuming you have a Product model
+    ref: 'Product',
     required: true
   },
   quantity: {
