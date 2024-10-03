@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import SoleStyleLogo from '../../assets/SoleStyleLogoNew.svg';
+import SoleStyleLogo from '../../assets/SoleStyleLogo.svg';
 
 export default function Header({ token, callback }: { token: string, callback: (_: string) => void }) {
     const [state, setState] = React.useState(false)
