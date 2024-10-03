@@ -32,7 +32,7 @@ export default function Header({ token, callback }: { token: string, callback: (
                             <img
                                 src={SoleStyleLogo}
                                 alt="Logo"
-                                className="h-24 w-auto"
+                                className="h-16 w-auto"
                             />
                         </Link>
                         <div className="md:hidden">
