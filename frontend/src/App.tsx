@@ -9,6 +9,7 @@ import { ModeToggle } from "./components/ui/mode-toggle";
 import Header from "./pages/commons/header";
 import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
+import AdminDashboard from "./pages/commons/admin/admin";
 
 function App() {
   const [token, setToken] = useState("");
@@ -19,7 +20,9 @@ function App() {
   // TODO: think of a better way to show header and footer
   const is_allowed = (path: string) => {
     // don't show header and footer for /login and /signup
-    return !(path === "/login" || path === "/signup");
+    const disallowed_routes = ["/login", "/signup", "/admin"];
+    return !disallowed_routes.some(p => path === p);
+    // return !(path === "/login" || path === "/signup");
   }
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -30,10 +33,17 @@ function App() {
           <Route index element={<Home />}></Route>
           <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
           <Route path="/signup" element={<SignUpForm />}></Route>
+          <Route path="/admin">
+            <Route index element={<AdminDashboard>
+                <h1>Foo Bar</h1>
+                </AdminDashboard>}>
+            </Route>
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
       </Routes>
       { (token || is_allowed(location.pathname)) &&  <Footer /> }
+
     </ThemeProvider>
 
   )
