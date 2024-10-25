@@ -1,6 +1,8 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AdminProducts from "./products";
+import Products from "@/pages/products";
+import Page from "./products";
 export default function AdminDashboard({ children }: { children: React.ReactNode }) {
     const projects = [
         {
@@ -15,7 +17,7 @@ export default function AdminDashboard({ children }: { children: React.ReactNode
             <main>
                 <SidebarTrigger />
                 {children}
-                <AdminProducts />
+                <Page />
             </main>
       </SidebarProvider>
     );
