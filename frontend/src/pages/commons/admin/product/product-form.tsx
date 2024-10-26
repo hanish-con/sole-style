@@ -25,6 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
+import { CATEGORY_OPTIONS } from './product-table/product-table-filters';
 
 
 // const MAX_FILE_SIZE = 5000000;
@@ -72,7 +73,7 @@ export default function ProductForm({
   const defaultValues = {
     imageURL: initialData?.imageURL || '',
     name: initialData?.name || '',
-    category: initialData?.category || 'beauty',
+    category: initialData?.category || CATEGORY_OPTIONS[0].value,
     price: initialData?.price || 0,
     description: initialData?.description || ''
   };
@@ -137,7 +138,7 @@ export default function ProductForm({
                     <FormLabel>Category</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value='beauty'
+                      value={CATEGORY_OPTIONS[0].value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -145,13 +146,15 @@ export default function ProductForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="beauty">Beauty Products</SelectItem>
-                        <SelectItem value="electronics">Electronics</SelectItem>
+                        {
+                          CATEGORY_OPTIONS.map(c => <SelectItem key={c.value} value={c.value}>{ c.label}</SelectItem>)
+                        }
+                        {/* <SelectItem value="electronics">Electronics</SelectItem>
                         <SelectItem value="clothing">Clothing</SelectItem>
                         <SelectItem value="home">Home & Garden</SelectItem>
                         <SelectItem value="sports">
                           Sports & Outdoors
-                        </SelectItem>
+                        </SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -194,7 +197,10 @@ export default function ProductForm({
                 </FormItem>
               )}
             />
-            <Button type="submit">Add Product</Button>
+            <div className='flex h-5 items-center space-x-4 text-sm'>
+              <Button type="submit">Add Product</Button>
+              <Button onClick={() => navigate("/admin")}>Cancel</Button>
+            </div>
           </form>
         </Form>
       </CardContent>

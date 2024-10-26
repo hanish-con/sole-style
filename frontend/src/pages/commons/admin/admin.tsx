@@ -18,6 +18,7 @@ export default function AdminDashboard({ children }: { children: React.ReactNode
             <SidebarTrigger />
             <main className="container mx-24 w-full">
                 <Outlet />
+                {children}
                 {/* <ProductPage /> */}
             </main>
       </SidebarProvider>

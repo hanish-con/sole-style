@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings, ShoppingBag } from "lucide-react"
+import { Grid, ShoppingBag } from "lucide-react"
  
 import {
   Sidebar,
@@ -15,28 +15,13 @@ import {
 const items = [
   {
     title: "Categories",
-    url: "/categories",
-    icon: Home,
+    url: "#",
+    icon: Grid,
   },
   {
     title: "Products",
-    url: "#",
+    url: "/admin",
     icon: ShoppingBag,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
   },
 ]
  
@@ -45,7 +30,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-lg mb-4">SoleStyle Admin</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

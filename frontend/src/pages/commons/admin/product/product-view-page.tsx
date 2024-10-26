@@ -3,27 +3,33 @@
 import { useParams } from 'react-router-dom';
 import ProductForm from './product-form';
 import { Product } from '@/models/user';
+import { useEffect, useState } from 'react';
+import { getProductByID } from '@/utils/api';
 
-type TProductViewPageProps = {
-  productId: string;
-};
+// type TProductViewPageProps = {
+//   productId: string;
+// };
 
 // export default function ProductViewPage({
 //   productId
 // }: TProductViewPageProps) {}
 
 export default function ProductViewPage() {
-  let product = null;
   let pageTitle = 'Create New Product';
 
   const { productId } = useParams();
+  const [product, setProduct] = useState<Product>(null);
+
+  useEffect(() => {
+    if (productId !== "new") {
+      getProductByID(productId).then(product => setProduct(product));
+    }
+  }, [productId]);
 
   if (productId !== 'new') {
-    // const data = await fakeProducts.getProductById(Number(productId));
-    const data = { total_products: 10, product: []};
-    product = data.product as Product;
     if (!product) {
       // notFound();
+      // navigate to product not found ?
       return;
     }
     pageTitle = `Edit Product`;

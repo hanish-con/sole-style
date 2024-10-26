@@ -56,8 +56,8 @@ export function DataTable<TData, TValue>({
   //     .withDefault(10)
   // );
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const paginationState = {
     pageIndex: currentPage - 1, // zero-based index for React Table

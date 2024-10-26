@@ -6,8 +6,6 @@ import { SignUpForm } from "./pages/signup";
 import { NotFound } from "./pages/fallback";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
-import Header from "./pages/commons/header";
-import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
 import AdminDashboard from "./pages/commons/admin/admin";
 import ProductViewPage from "./pages/commons/admin/product/product-view-page";
@@ -33,17 +31,17 @@ function App() {
 
       {/* { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> } */}
       <Routes>
+        <Route path="/" element={<MainLayout token={token} setToken={setToken} ></MainLayout>}>
         <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
         <Route path="/signup" element={<SignUpForm />}></Route>
-        <Route path="/" element={<MainLayout token={token} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
           <Route path="/admin" element={<AdminDashboard>
-                </AdminDashboard>}>
+                </AdminDashboard>}  >
             {/* <Route index element={<AdminDashboard>
                 <h1>Foo Bar</h1>
                 </AdminDashboard>}> */}
-              <Route index element={<ProductPage></ProductPage>}></Route>
-              <Route index path=":productId" element={<ProductViewPage></ProductViewPage>}></Route>
+                <Route index element={<ProductPage></ProductPage>}></Route>
+                <Route path="product/:productId" element={<ProductViewPage></ProductViewPage>}></Route>
             {/* </Route> */}
           </Route>
           <Route path="*" element={<NotFound />} />

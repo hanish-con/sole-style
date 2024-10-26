@@ -1,14 +1,10 @@
 import PageContainer from '@/components/layout/page-container';
 import { buttonVariants } from '@/components/ui/button';
-// import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { DataTableSkeleton } from '@/components/layout/table/data-table-skeleton';
-// import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
-// import Link from 'next/link';
 import { Link } from 'react-router-dom';
-// import { SearchParams } from 'nuqs/parsers';
 import { Suspense } from 'react';
 import ProductListingPage from './product/product-listing';
 import ProductTableAction from './product/product-table/product-table-action';
@@ -20,13 +16,7 @@ export const metadata = {
 
 
 
-// export default async function Page({ searchParams }: pageProps) {
 export default function ProductPage() {
-  // Allow nested RSCs to access the search params (in a type-safe way)
-//   searchParamsCache.parse(searchParams);
-
-  // This key is used for invoke suspense if any of the search params changed (used for filters).
-//   const key = serialize({ ...searchParams });
   const key = "";
 
   return (
@@ -35,10 +25,10 @@ export default function ProductPage() {
         <div className="flex items-start justify-between">
           <Heading
             title="Products"
-            description="Manage products (Server side table functionalities.)"
+            description="Manage products"
           />
           <Link
-            to="/admin/new"
+            to="/admin/product/new"
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New

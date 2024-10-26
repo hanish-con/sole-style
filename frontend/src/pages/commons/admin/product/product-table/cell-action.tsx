@@ -8,34 +8,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-// import { Product } from '@/constants/data';
+import { Product } from '@/models/user';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-// import { useRouter } from 'next/navigation';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-
-type Product = {
-  photo_url: string;
-  name: string;
-  description: string;
-  created_at: string;
-  price: number;
-  id: number;
-  category: string;
-  updated_at: string;
-}
 
 interface CellActionProps {
   data: Product;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-//   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const navigate = useNavigate();
+
+  const onConfirm = async () => {
+    console.log({ id: data.id });
+  };
 
   return (
     <>
@@ -43,7 +34,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
-        loading={loading}
+        loading={false}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -56,7 +47,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            // onClick={() => router.push(`/dashboard/product/${data.id}`)}
+            onClick={() => navigate(`/admin/product/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

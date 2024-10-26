@@ -22,8 +22,6 @@ export default function ProductListingPage() {
 //     ...(categories && { categories: categories })
 //   };
 
-//   const data = await fakeProducts.getProducts(filters);
-  // const data = { total_products: 10, products: []};
 
   const [products, setProducts] = useState<Product[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -34,9 +32,6 @@ export default function ProductListingPage() {
       setTotalProducts(data.totalProducts);
     });
   }, []);
-
-  // const totalProducts = data.totalProducts;
-  // const products: Product[] = data.products;
 
   return (
     <ProductTable
