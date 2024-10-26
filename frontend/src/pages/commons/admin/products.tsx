@@ -24,8 +24,8 @@ export default function ProductPage() {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title="Products"
-            description="Manage products"
+            title="Manage products"
+            description=""
           />
           <Link
             to="/admin/product/new"

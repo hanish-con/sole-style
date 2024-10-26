@@ -49,7 +49,7 @@ const formSchema = z.object({
   //     '.jpg, .jpeg, .png and .webp files are accepted.'
   //   ),
   imageURL: z.string({
-    required_error: "Image is required",
+    required_error: "Image URL is required",
   }).min(5, {
     message: 'Image URL needs to be atleast 5 characters'
   }),
@@ -58,6 +58,9 @@ const formSchema = z.object({
   }),
   category: z.string(),
   price: z.coerce.number(),
+  stock: z.coerce.number().gte(1, {
+    message: "Stock must be greater than 0",
+  }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
   })
@@ -75,6 +78,7 @@ export default function ProductForm({
     name: initialData?.name || '',
     category: initialData?.category || CATEGORY_OPTIONS[0].value,
     price: initialData?.price || 0,
+    stock: initialData?.stock || 1,
     description: initialData?.description || ''
   };
 
@@ -149,12 +153,6 @@ export default function ProductForm({
                         {
                           CATEGORY_OPTIONS.map(c => <SelectItem key={c.value} value={c.value}>{ c.label}</SelectItem>)
                         }
-                        {/* <SelectItem value="electronics">Electronics</SelectItem>
-                        <SelectItem value="clothing">Clothing</SelectItem>
-                        <SelectItem value="home">Home & Garden</SelectItem>
-                        <SelectItem value="sports">
-                          Sports & Outdoors
-                        </SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -172,6 +170,23 @@ export default function ProductForm({
                         type="number"
                         step="0.01"
                         placeholder="Enter price"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="stock"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="In Stock"
                         {...field}
                       />
                     </FormControl>

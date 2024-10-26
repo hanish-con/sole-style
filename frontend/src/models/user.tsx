@@ -8,12 +8,13 @@ export interface UserModel {
 
 export type Product = {
     imageURL: string,
-    photo_url: string;
-    name: string;
-    description: string;
-    created_at: string;
-    price: number;
-    id: number;
-    category: string;
-    updated_at: string;
+    photo_url: string,
+    name: string,
+    description: string,
+    created_at: string,
+    price: number,
+    stock: number,
+    id: number,
+    category: string,
+    updated_at: string,
 };
