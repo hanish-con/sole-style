@@ -6,9 +6,11 @@ import { SignUpForm } from "./pages/signup";
 import { NotFound } from "./pages/fallback";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toggle";
-import Header from "./pages/commons/header";
-import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
+import AdminDashboard from "./pages/commons/admin/admin";
+import ProductViewPage from "./pages/commons/admin/product/product-view-page";
+import ProductPage from "./pages/commons/admin/products";
+import MainLayout from "./pages/main";
 
 function App() {
   const [token, setToken] = useState("");
@@ -19,21 +21,34 @@ function App() {
   // TODO: think of a better way to show header and footer
   const is_allowed = (path: string) => {
     // don't show header and footer for /login and /signup
-    return !(path === "/login" || path === "/signup");
+    const disallowed_routes = ["/login", "/signup", "/admin"];
+    return !disallowed_routes.some(p => path === p);
+    // return !(path === "/login" || path === "/signup");
   }
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ModeToggle />
-      { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> }
+
+      {/* { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> } */}
       <Routes>
-        <Route path="/">
+        <Route path="/" element={<MainLayout token={token} setToken={setToken} ></MainLayout>}>
+        <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
+        <Route path="/signup" element={<SignUpForm />}></Route>
           <Route index element={<Home />}></Route>
-          <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
-          <Route path="/signup" element={<SignUpForm />}></Route>
+          <Route path="/admin" element={<AdminDashboard>
+                </AdminDashboard>}  >
+            {/* <Route index element={<AdminDashboard>
+                <h1>Foo Bar</h1>
+                </AdminDashboard>}> */}
+                <Route index element={<ProductPage></ProductPage>}></Route>
+                <Route path="product/:productId" element={<ProductViewPage></ProductViewPage>}></Route>
+            {/* </Route> */}
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
       </Routes>
-      { (token || is_allowed(location.pathname)) &&  <Footer /> }
+      {/* { (token || is_allowed(location.pathname)) &&  <Footer /> } */}
+
     </ThemeProvider>
 
   )

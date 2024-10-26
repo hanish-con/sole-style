@@ -16,6 +16,7 @@ export default function Header({ token, callback }: { token: string, callback: (
         { title: "Cart", path: "/cart" },
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
+        { title: "Admin", path: "/admin" },
     ]
 
     const logout = (e) => {
