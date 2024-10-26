@@ -1,28 +1,22 @@
 // import { fakeProducts, Product } from '@/constants/mock-api';
 // import { notFound } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 import ProductForm from './product-form';
+import { Product } from '@/models/user';
 
 type TProductViewPageProps = {
   productId: string;
 };
 
-export type Product = {
-  photo_url: string;
-  name: string;
-  description: string;
-  created_at: string;
-  price: number;
-  id: number;
-  category: string;
-  updated_at: string;
-};
+// export default function ProductViewPage({
+//   productId
+// }: TProductViewPageProps) {}
 
-
-export default function ProductViewPage({
-  productId
-}: TProductViewPageProps) {
+export default function ProductViewPage() {
   let product = null;
   let pageTitle = 'Create New Product';
+
+  const { productId } = useParams();
 
   if (productId !== 'new') {
     // const data = await fakeProducts.getProductById(Number(productId));

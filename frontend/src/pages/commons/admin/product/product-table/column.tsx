@@ -3,22 +3,13 @@
 import { ColumnDef } from '@tanstack/react-table';
 // import Image from 'next/image';
 import { CellAction } from './cell-action';
+import { Product } from '@/models/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-
-type Product = {
-    photo_url: string;
-    name: string;
-    description: string;
-    created_at: string;
-    price: number;
-    id: number;
-    category: string;
-    updated_at: string;
-  }
 
 export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: 'photo_url',
+    accessorKey: 'imageURL',
     header: 'IMAGE',
     cell: ({ row }) => {
       return (
@@ -30,12 +21,18 @@ export const columns: ColumnDef<Product>[] = [
             className="rounded-lg"
           /> */}
           <img
-            src={row.getValue('photo_url')}
+            src={row.getValue('imageURL')}
             alt={row.getValue('name')}
             // fill
-            className="rounded-lg"
+            width={100}
+            // height={100}
+            className="rounded-lg object-fit-cover"
           />
         </div>
+        // <Avatar>
+        //     <AvatarImage src={row.getValue("imageURL")} alt={row.getValue("name")} />
+        //     <AvatarFallback>N</AvatarFallback>
+        // </Avatar>
       );
     }
   },

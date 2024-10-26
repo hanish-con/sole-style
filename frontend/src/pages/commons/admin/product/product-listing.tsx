@@ -2,18 +2,10 @@
 
 import { DataTable as ProductTable } from '@/components/layout/table/data-table';
 import { columns } from './product-table/column';
+import { Product } from '@/models/user';
+import { getProducts } from '@/utils/api';
+import { useEffect, useState } from 'react';
 
-
-type Product = {
-    photo_url: string;
-    name: string;
-    description: string;
-    created_at: string;
-    price: number;
-    id: number;
-    category: string;
-    updated_at: string;
-}
 
 
 export default function ProductListingPage() {
@@ -31,9 +23,20 @@ export default function ProductListingPage() {
 //   };
 
 //   const data = await fakeProducts.getProducts(filters);
-  const data = { total_products: 10, products: []};
-  const totalProducts = data.total_products;
-  const products: Product[] = data.products;
+  // const data = { total_products: 10, products: []};
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+
+  useEffect(() => {
+    getProducts(null).then(data => {
+      setProducts(data.products);
+      setTotalProducts(data.totalProducts);
+    });
+  }, []);
+
+  // const totalProducts = data.totalProducts;
+  // const products: Product[] = data.products;
 
   return (
     <ProductTable

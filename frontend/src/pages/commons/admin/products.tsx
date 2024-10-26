@@ -21,7 +21,7 @@ export const metadata = {
 
 
 // export default async function Page({ searchParams }: pageProps) {
-export default function Page() {
+export default function ProductPage() {
   // Allow nested RSCs to access the search params (in a type-safe way)
 //   searchParamsCache.parse(searchParams);
 
@@ -38,7 +38,7 @@ export default function Page() {
             description="Manage products (Server side table functionalities.)"
           />
           <Link
-            to="/dashboard/product/new"
+            to="/admin/new"
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New

@@ -10,6 +10,9 @@ import Header from "./pages/commons/header";
 import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
 import AdminDashboard from "./pages/commons/admin/admin";
+import ProductViewPage from "./pages/commons/admin/product/product-view-page";
+import ProductPage from "./pages/commons/admin/products";
+import MainLayout from "./pages/main";
 
 function App() {
   const [token, setToken] = useState("");
@@ -27,22 +30,26 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ModeToggle />
-      { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> }
+
+      {/* { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> } */}
       <Routes>
-        <Route path="/">
+        <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
+        <Route path="/signup" element={<SignUpForm />}></Route>
+        <Route path="/" element={<MainLayout token={token} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
-          <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
-          <Route path="/signup" element={<SignUpForm />}></Route>
-          <Route path="/admin">
-            <Route index element={<AdminDashboard>
-                <h1>Foo Bar</h1>
+          <Route path="/admin" element={<AdminDashboard>
                 </AdminDashboard>}>
-            </Route>
+            {/* <Route index element={<AdminDashboard>
+                <h1>Foo Bar</h1>
+                </AdminDashboard>}> */}
+              <Route index element={<ProductPage></ProductPage>}></Route>
+              <Route index path=":productId" element={<ProductViewPage></ProductViewPage>}></Route>
+            {/* </Route> */}
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      { (token || is_allowed(location.pathname)) &&  <Footer /> }
+      {/* { (token || is_allowed(location.pathname)) &&  <Footer /> } */}
 
     </ThemeProvider>
 
