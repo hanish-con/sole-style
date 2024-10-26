@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; 
+
 
 export default function Products() {
   const [products, setProducts] = useState<any[]>([]);
@@ -41,7 +43,7 @@ export default function Products() {
 
   return (
     <div>
-      <h1>Products</h1><br></br>
+      <h1>Products</h1>
       {loading ? ( 
         <div>Loading products...</div>
       ) : error ? (
@@ -50,6 +52,7 @@ export default function Products() {
         <div className="product-list">
           {products.map((product) => (
             <div key={product._id} className="product-card">
+              <br></br>
               <h2>Name: {product.name}</h2> {/* Product name with label */}
               <p>Description: {product.description}</p> {/* Description with label */}
               <p>Price: ${product.price.toFixed(2)}</p> {/* Price with label */}
@@ -57,7 +60,8 @@ export default function Products() {
               {product.images.length > 0 && (
                 <img src={product.images[0]} alt={product.name} width="500" />
               )}
-              <br></br>
+              <Link to={`/products/${product._id}`}>View Details</Link> {/* Link to ProductDetails */}
+              
             </div>
           ))}
         </div>
