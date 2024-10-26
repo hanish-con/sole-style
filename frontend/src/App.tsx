@@ -10,6 +10,7 @@ import Header from "./pages/commons/header";
 import Footer from "./pages/commons/footer";
 import Home from "./pages/home";
 import Products from "./pages/products"; 
+import ProductDetails from "./pages/productdetails"; 
 
 
 function App() {
@@ -30,7 +31,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/login" element={<LoginForm callback={setToken} />} />
           <Route path="/signup" element={<SignUpForm />} />
-          <Route path="/products" element={<Products />} /> {/* Add the Products route */}
+          <Route path="/products" element={<Products />} /> 
+          <Route path="/products/:id" element={<ProductDetails />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
