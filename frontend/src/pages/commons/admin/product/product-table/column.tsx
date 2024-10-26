@@ -32,11 +32,22 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: 'category',
-    header: 'CATEGORY'
+    header: 'CATEGORY',
   },
   {
     accessorKey: 'price',
-    header: 'PRICE'
+    // header: 'PRICE',
+    header: () => <div className="text-right">PRICE</div>,
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("price"))
+
+      // Format the amount as a dollar amount
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount)
+      return <div className="text-right font-medium">{formatted}</div>
+    },
   },
   {
     accessorKey: 'description',
