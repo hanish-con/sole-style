@@ -28,7 +28,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'NAME'
+    header: 'NAME',
   },
   {
     accessorKey: 'category',
@@ -50,8 +50,16 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: 'stock',
+    header: () => <div className="text-center">STOCK</div>,
+    cell: ({ row }) => {
+      const stock = parseFloat(row.getValue("stock"));
+      return <div className="text-center bg-gray-100 text-gray-800 text-xs font-bold px-1.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">{stock}</div>
+    },
+  },
+  {
     accessorKey: 'description',
-    header: 'DESCRIPTION'
+    header: 'DESCRIPTION',
   },
 
   {
