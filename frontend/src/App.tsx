@@ -11,6 +11,8 @@ import AdminDashboard from "./pages/commons/admin/admin";
 import ProductViewPage from "./pages/commons/admin/product/product-view-page";
 import ProductPage from "./pages/commons/admin/products";
 import MainLayout from "./pages/main";
+import Products from "./pages/products";
+import ProductDetails from "./pages/productdetails";
 
 function App() {
   const [token, setToken] = useState("");
@@ -35,6 +37,9 @@ function App() {
         <Route path="/login" element={<LoginForm callback={setToken} />}></Route>
         <Route path="/signup" element={<SignUpForm />}></Route>
           <Route index element={<Home />}></Route>
+          <Route path="/products" element={<Products />}></Route>
+          <Route path="/products/:id" element={<ProductDetails />}></Route>
+          
           <Route path="/admin" element={<AdminDashboard>
                 </AdminDashboard>}  >
             {/* <Route index element={<AdminDashboard>
@@ -45,6 +50,7 @@ function App() {
             {/* </Route> */}
           </Route>
           <Route path="*" element={<NotFound />} />
+
         </Route>
       </Routes>
       {/* { (token || is_allowed(location.pathname)) &&  <Footer /> } */}
