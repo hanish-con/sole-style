@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ error: "Unauthorized"});
   }
-  // set user details here
+
   next();
 }
 
@@ -58,15 +58,27 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-app.get("/products", verifyToken, async (req, res) => {
-  const products = await Product.find({});
-  return res.json(products);
-});
+// old products route
+// app.get("/products", verifyToken, async (req, res) => {
+//   const products = await Product.find({});
+//   return res.json(products);
+// });
 
 app.get("/featured-products", verifyToken, async (req, res) => {
   // get featured products somehow
   const products = await Product.find({});
   return res.json(products);
+});
+
+// new product route
+app.get('/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    return res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return res.status(500).json({ message: 'Failed to fetch products' });
+  }
 });
 
 const PORT = process.env.PORT || 3002;
