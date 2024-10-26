@@ -70,6 +70,8 @@ app.get("/featured-products", verifyToken, async (req, res) => {
   return res.json(products);
 });
 
+
+// product page
 // new product route
 app.get('/products', async (req, res) => {
   try {
@@ -81,6 +83,7 @@ app.get('/products', async (req, res) => {
   }
 });
 
+// productdetails page
 // route for productdetails page
 app.get("/products/:id", async (req, res) => {
   try {
