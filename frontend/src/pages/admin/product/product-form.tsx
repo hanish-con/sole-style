@@ -26,6 +26,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
 import { CATEGORY_OPTIONS } from './product-table/product-table-filters';
+import { createOrUpdateProduct } from '@/utils/api';
 
 
 // const MAX_FILE_SIZE = 5000000;
@@ -63,7 +64,8 @@ const formSchema = z.object({
   }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
-  })
+  }),
+  _id: z.string(),
 });
 
 export default function ProductForm({
@@ -74,6 +76,7 @@ export default function ProductForm({
   pageTitle: string;
 }) {
   const defaultValues = {
+    _id: initialData?._id || '',
     imageURL: initialData?.imageURL || '',
     name: initialData?.name || '',
     category: initialData?.category || CATEGORY_OPTIONS[0].value,
@@ -89,8 +92,9 @@ export default function ProductForm({
 
   const navigate = useNavigate();
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    await createOrUpdateProduct(values);
     navigate("/admin");
   }
 
@@ -104,6 +108,13 @@ export default function ProductForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="_id"
+              render={({ field }) => (
+                <Input type='hidden' {...field} />
+              )}
+            />
             <FormField
               control={form.control}
               name="imageURL"

@@ -133,3 +133,17 @@ export async function _getProductByID(id): Promise<Product> {
     return resp;
 }
 
+export async function createOrUpdateProduct(product: Product): Promise<Product | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/products`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(product),
+        });
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+

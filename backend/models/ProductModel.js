@@ -14,10 +14,14 @@ const productSchema = new Schema({
     required: true,
     trim: true
   },
+  // category: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Category',
+  //   required: true
+  // },
   category: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
+    type: String,
+    enum: ["men", "women", "kids"]
   },
   price: {
     type: Number,
@@ -34,6 +38,10 @@ const productSchema = new Schema({
       type: String 
     }
   ],
+  imageURL: {
+    type: String,
+    default: "https://m.media-amazon.com/images/I/618IK6sSdmL._AC_SY695_.jpg",
+  },
   createdAt: {
     type: Date,
     default: Date.now

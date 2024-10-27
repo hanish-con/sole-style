@@ -28,8 +28,8 @@ export default function ProductListingPage() {
 
   useEffect(() => {
     getProducts(null).then(data => {
-      setProducts(data.products);
-      setTotalProducts(data.totalProducts);
+      setProducts(data?.products || []);
+      setTotalProducts(data?.totalProducts || 0);
     });
   }, []);
 

@@ -18,11 +18,11 @@ export default function ProductViewPage() {
   let pageTitle = 'Create New Product';
 
   const { productId } = useParams();
-  const [product, setProduct] = useState<Product>(null);
+  const [product, setProduct] = useState<Product>(null!);
 
   useEffect(() => {
     if (productId !== "new") {
-      getProductByID(productId).then(product => setProduct(product));
+      getProductByID(productId!).then(product => setProduct(product!));
     }
   }, [productId]);
 

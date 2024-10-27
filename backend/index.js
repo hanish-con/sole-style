@@ -58,11 +58,6 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-// old products route
-// app.get("/products", verifyToken, async (req, res) => {
-//   const products = await Product.find({});
-//   return res.json(products);
-// });
 
 app.get("/featured-products", verifyToken, async (req, res) => {
   // get featured products somehow
@@ -92,6 +87,26 @@ app.get("/products/:id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching product:", error);
     res.status(500).json({ message: "Failed to fetch product" });
+  }
+});
+
+
+app.post('/products', async (req, res) => {
+  const data = req.body;
+  console.log({ data });
+  let product = null;
+  try {
+    if (data._id) {
+      product = await Product.findByIdAndUpdate(data._id, data, { new: true})
+    } else {
+      delete data._id;
+      product = new Product(data);
+      product = product.save();
+    }
+    return res.json(product);
+  } catch (error) {
+    console.error('Error saving product:', error);
+    return res.status(500).json({ message: 'Failed to save product' });
   }
 });
 

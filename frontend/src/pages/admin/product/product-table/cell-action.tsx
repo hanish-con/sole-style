@@ -25,7 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const navigate = useNavigate();
 
   const onConfirm = async () => {
-    console.log({ id: data.id });
+    console.log({ id: data._id });
   };
 
   return (
@@ -47,7 +47,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => navigate(`/admin/product/${data.id}`)}
+            onClick={() => navigate(`/admin/product/${data._id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

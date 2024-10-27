@@ -10,10 +10,10 @@ export type Product = {
     imageURL: string,
     name: string,
     description: string,
-    createdAt: string,
+    createdAt?: string,
     price: number,
     stock: number,
-    id: number,
+    _id?: string,
     category: string,
-    updatedAt: string,
+    updatedAt?: string,
 };
