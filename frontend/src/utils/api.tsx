@@ -19,7 +19,26 @@ export async function loginUser(userData: UserModel) {
     return resp;
 }
 
-export async function getProducts(filters): Promise<
+export async function getProducts(filter): Promise<
+{ totalProducts: number, products: Product[] } | null
+>   {
+    try {
+        console.log("Fetching products...");
+        const response = await fetch("http://localhost:3002/products", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const products = await response.json();
+        return { totalProducts: 10, products }
+    } catch (error) {
+        console.error("Fetch error:", error);
+        return null;
+    }
+};
+
+export async function _getProducts(filters): Promise<
     { totalProducts: number, products: Product[] }
 > {
     // const resp = await fetch("http://localhost:3002/products", {
@@ -80,7 +99,21 @@ export async function getProducts(filters): Promise<
     return resp;
 }
 
-export async function getProductByID(id): Promise<Product> {
+
+export async function getProductByID(id: string): Promise<Product | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/products/${id}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function _getProductByID(id): Promise<Product> {
     // const resp = await fetch("http://localhost:3002/products", {
     //     method: "POST",
     //     headers: { "Content-Type": "application/json" },
