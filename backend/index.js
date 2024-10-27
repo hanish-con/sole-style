@@ -96,9 +96,11 @@ app.post('/products', async (req, res) => {
   console.log({ data });
   let product = null;
   try {
+    // if _id is not null, then that means this is an update request
     if (data._id) {
       product = await Product.findByIdAndUpdate(data._id, data, { new: true})
     } else {
+      // remove the _id from the data, because we are creating a new
       delete data._id;
       product = new Product(data);
       product = product.save();
@@ -109,6 +111,20 @@ app.post('/products', async (req, res) => {
     return res.status(500).json({ message: 'Failed to save product' });
   }
 });
+
+
+app.delete('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  console.log({ id });
+  try {
+      await Product.findByIdAndDelete(id);
+      return res.json(id);
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    return res.status(500).json({ message: 'Failed to delete product' });
+  }
+});
+
 
 const PORT = process.env.PORT || 3002;
 
