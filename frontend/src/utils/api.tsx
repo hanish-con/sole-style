@@ -23,7 +23,6 @@ export async function getProducts(filter): Promise<
 { totalProducts: number, products: Product[] } | null
 >   {
     try {
-        console.log("Fetching products...");
         const response = await fetch("http://localhost:3002/products", {
             method: "GET",
             headers: {

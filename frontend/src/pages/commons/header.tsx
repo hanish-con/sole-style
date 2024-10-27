@@ -2,13 +2,16 @@
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SoleStyleLogo from '../../assets/SoleStyleLogo.svg';
+import { UserModel } from "@/models/user";
 
-export default function Header({ token, callback }: { token: string, callback: (_: string) => void }) {
+export default function Header({ callback }: { callback: (_: string) => void }) {
     const [state, setState] = React.useState(false)
     const navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
 
     const menus = [
         { title: "Home", path: "/" },
@@ -16,11 +19,13 @@ export default function Header({ token, callback }: { token: string, callback: (
         { title: "Cart", path: "/cart" },
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
-        { title: "Admin", path: "/admin" },
+        // { title: "Admin", path: "/admin" },
     ]
 
     const logout = (e) => {
         // unset token
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         callback("");
         navigate("/login", { replace: true });
     }
@@ -49,8 +54,8 @@ export default function Header({ token, callback }: { token: string, callback: (
                         className={`flex-1 justify-self-center pb-3 mt-8 md:block md:pb-0 md:mt-0 ${state ? "block" : "hidden"
                             }`}
                     >
-                        <ul className="justify-center items-center space-y-8 md:flex md:space-x-6 md:space-y-0">
-                            {menus.map((item, idx) => (
+                        <ul className="justify-end items-center space-y-8 md:flex md:space-x-6 md:space-y-0 me-4">
+                            {user?.role !== "Admin" && menus.map((item, idx) => (
                                 <li key={idx} className="text-gray-600 hover:text-violet-600">
                                     <Link to={item.path}>{item.title}</Link>
                                 </li>
@@ -64,9 +69,6 @@ export default function Header({ token, callback }: { token: string, callback: (
                                     </li>
                                 )
                             }
-                            <form>
-                                <Input type="text" placeholder="Search" />
-                            </form>
                             {
                                 // if token is not set, show login and signup
                                 !token && (

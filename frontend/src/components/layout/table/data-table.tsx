@@ -22,14 +22,17 @@ import {
 } from '@radix-ui/react-icons';
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
   useReactTable
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 // import { parseAsInteger, useQueryState } from 'nuqs';
 
 interface DataTableProps<TData, TValue> {
@@ -55,6 +58,7 @@ export function DataTable<TData, TValue>({
   //     .withOptions({ shallow: false, history: 'push' })
   //     .withDefault(10)
   // );
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -85,13 +89,13 @@ export function DataTable<TData, TValue>({
     columns,
     pageCount: pageCount,
     state: {
-      pagination: paginationState
+      pagination: paginationState,
     },
     onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    manualFiltering: true
+    manualFiltering: true,
   });
 
   return (

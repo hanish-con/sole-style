@@ -36,7 +36,6 @@ export function LoginForm({ callback }) {
     const [loginError, setLoginError] = useState("");
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log({ values });
         const res = await loginUser((values as unknown) as UserModel);
         if (!res.ok) {
             const { error } = await res.json();
@@ -47,8 +46,15 @@ export function LoginForm({ callback }) {
             return;
         }
 
-        const { token } = await res.json();
-        callback(token);
+        const { token, user } = await res.json();
+        callback({
+            token,
+            user
+        });
+        if (user.role === "Admin") {
+            navigate("/admin");
+            return;
+        }
         navigate("/");
         return;
     }
