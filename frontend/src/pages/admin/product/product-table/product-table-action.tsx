@@ -27,7 +27,7 @@ export default function ProductTableAction() {
         setSearchQuery={setSearchQuery}
         setPage={setPage}
       />
-      <DataTableFilterBox
+      {/* <DataTableFilterBox
         filterKey="categories"
         title="Categories"
         options={CATEGORY_OPTIONS}
@@ -37,7 +37,7 @@ export default function ProductTableAction() {
       <DataTableResetFilter
         isFilterActive={isAnyFilterActive}
         onReset={resetFilters}
-      />
+      /> */}
     </div>
   );
 }

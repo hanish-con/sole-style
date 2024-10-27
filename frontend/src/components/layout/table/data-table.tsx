@@ -63,6 +63,9 @@ export function DataTable<TData, TValue>({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const [query, _] = useSearchParams();
+  const q = query.get("q");
+
   const paginationState = {
     pageIndex: currentPage - 1, // zero-based index for React Table
     pageSize: pageSize
@@ -84,18 +87,33 @@ export function DataTable<TData, TValue>({
     setPageSize(pagination.pageSize);
   };
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    []
+  );
+
+  useEffect(() => {
+    setColumnFilters([{
+      id: "name",
+      value: q || ''
+    }])
+  }, [q]);
+
   const table = useReactTable({
     data,
     columns,
     pageCount: pageCount,
     state: {
       pagination: paginationState,
+      columnFilters,
     },
     onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    manualFiltering: true,
+    // manualFiltering: true,
+    getFilteredRowModel: getFilteredRowModel(), //client side filtering
+    onColumnFiltersChange: setColumnFilters,
+
   });
 
   return (

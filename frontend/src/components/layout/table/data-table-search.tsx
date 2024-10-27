@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 // import { Options } from 'nuqs';
 import { useTransition } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 interface DataTableSearchProps {
   searchKey: string;
@@ -25,16 +26,23 @@ export function DataTableSearch({
   setPage
 }: DataTableSearchProps) {
   const [isLoading, startTransition] = useTransition();
+  const [query, setQueryParams] = useSearchParams();
 
   const handleSearch = (value: string) => {
     setSearchQuery(value, { startTransition });
+
+    setQueryParams({
+      q: value,
+    });
+
     setPage(1); // Reset page to 1 when search changes
   };
 
   return (
     <Input
       placeholder={`Search ${searchKey}...`}
-      value={searchQuery ?? ''}
+      // value={searchQuery ?? ''}
+      value={query.get('q') ?? ''}
       onChange={(e) => handleSearch(e.target.value)}
       className={cn('w-full md:max-w-sm', isLoading && 'animate-pulse')}
     />
