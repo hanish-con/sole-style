@@ -58,15 +58,41 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-app.get("/products", verifyToken, async (req, res) => {
-  const products = await Product.find({});
-  return res.json(products);
-});
+// old products route
+// app.get("/products", verifyToken, async (req, res) => {
+//   const products = await Product.find({});
+//   return res.json(products);
+// });
 
 app.get("/featured-products", verifyToken, async (req, res) => {
   // get featured products somehow
   const products = await Product.find({});
   return res.json(products);
+});
+
+// product page
+app.get('/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    return res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return res.status(500).json({ message: 'Failed to fetch products' });
+  }
+});
+
+// productdetails page
+app.get("/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json(product);
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ message: "Failed to fetch product" });
+  }
 });
 
 const PORT = process.env.PORT || 3002;
