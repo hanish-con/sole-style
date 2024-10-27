@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Product } from '@/models/user';
+import { deleteProduct } from '@/utils/api';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 
 import { useState } from 'react';
@@ -26,6 +27,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     console.log({ id: data._id });
+    await deleteProduct(data._id!);
+    setOpen(false);
+    navigate(0);
   };
 
   return (

@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 
 
 export default function ProductListingPage() {
-  // Showcasing the use of search params cache in nested RSCs
 //   const page = searchParamsCache.get('page');
 //   const search = searchParamsCache.get('q');
 //   const pageLimit = searchParamsCache.get('limit');
