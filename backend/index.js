@@ -55,7 +55,7 @@ app.post("/login", async (req, res) => {
   }
   // TODO: use jwt token or something ?
   const token = "123456789";
-  res.status(200).json({ token });
+  res.status(200).json({ token, user });
 });
 
 
@@ -93,7 +93,6 @@ app.get("/products/:id", async (req, res) => {
 
 app.post('/products', async (req, res) => {
   const data = req.body;
-  console.log({ data });
   let product = null;
   try {
     // if _id is not null, then that means this is an update request
@@ -115,7 +114,6 @@ app.post('/products', async (req, res) => {
 
 app.delete('/products/:id', async (req, res) => {
   const id = req.params.id;
-  console.log({ id });
   try {
       await Product.findByIdAndDelete(id);
       return res.json(id);
