@@ -3,17 +3,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent} from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading";
+import { Product } from "@/models/user";
 
 
 
-interface Product {
-  _id: number;
-  name: string;
-  description: string;
-  price: number;
-  images: string;
-  stock:number;
-}
+// interface Product {
+//   _id: number;
+//   name: string;
+//   description: string;
+//   price: number;
+//   images: string;
+//   stock:number;
+// }
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -73,7 +74,8 @@ export default function Products() {
               <Card key={product._id} className="shadow-md hover:shadow-lg transition-transform hover:scale-105">
               
                 <img
-                  src={product.images[0] || "/placeholder.jpg"}
+                  // src={product.images[0] || "/placeholder.jpg"}
+                  src={product.imageURL || "/placeholder.jpg"}
                   alt={product.name}
                   className="h-48 w-full object-cover rounded-t-lg"
                 />
