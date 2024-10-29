@@ -140,18 +140,17 @@ app.delete('/products/:id', async (req, res) => {
 
 
 // API for Category Data
-// category page
 app.get('/category', async (req, res) => {
   try {
     const categories = await Category.find();
-    console.log('Categories:', categories);
-    return res.json(categories);
-  }
-  catch (error) {
-    console.error('Error fetching categories:', error);
-    return res.status(500).json({ message: 'Failed to fetch categories' });
+    console.log("Categories:", categories);
+    res.json(categories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ message: "Failed to fetch categories" });
   }
 });
+
 
 
 const PORT = process.env.PORT || 3002;
