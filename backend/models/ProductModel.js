@@ -23,6 +23,16 @@ const productSchema = new Schema({
     type: String,
     enum: ["men", "women", "kids"]
   },
+  subcategory: {
+    type: String,
+    enum: ["winter shoes", "regular shoes"],
+    required: true
+  },
+  sizes: {
+    type: [String],
+    enum: ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+    required: true
+  },
   price: {
     type: Number,
     required: true,
