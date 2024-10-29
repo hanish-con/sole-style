@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent} from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading";
 import { Product } from "@/models/user";
-
+//added line here....  // Use actual DataTable
+import { DataTableSkeleton } from "@/components/layout/table/data-table-skeleton";  // For loading state
+import PageContainer from "@/components/layout/page-container";
 
 
 // interface Product {
@@ -15,11 +17,15 @@ import { Product } from "@/models/user";
 //   images: string;
 //   stock:number;
 // }
+const PAGE_SIZE = 10;
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [page, setPage] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -41,6 +47,7 @@ export default function Products() {
         const data = await response.json();
         console.log("Fetched data:", data);
         setProducts(data);
+        setTotalItems(data.length)
       } catch (error: unknown) {
         console.error("Fetch error:", error);
         if(error instanceof Error){
@@ -55,8 +62,13 @@ export default function Products() {
 
     fetchProducts();
   }, []);
+ // Calculate total pages
+ const totalPages = Math.ceil(totalItems / PAGE_SIZE);
 
+ // Paginate the products for display on the current page
+ const paginatedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return (
+    <PageContainer>
     <div className="min-h-screen transition-colors">
       <div className="text-center mb-5">
       <Heading title={"Our shoes"} description={""}></Heading>
@@ -65,12 +77,13 @@ export default function Products() {
 
       <div className="p-6">
         {loading ? (
-          <div className="text-center text-blue-500 dark:text-blue-300">Loading...</div>
+          <DataTableSkeleton columnCount={4} rowCount={10} /> 
+          // <div className="text-center text-blue-500 dark:text-blue-300">Loading...</div>
         ) : error ? (
           <div className="text-center text-red-500 dark:text-red-300">Error: {error}</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
+            {paginatedProducts.map((product) => (
               <Card key={product._id} className="shadow-md hover:shadow-lg transition-transform hover:scale-105">
               
                 <img
@@ -113,7 +126,27 @@ export default function Products() {
             ))}
           </div>
         )}
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-6 space-x-4">
+            <Button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-lg">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+
       </div>
     </div>
+    </PageContainer>
   );
 }
