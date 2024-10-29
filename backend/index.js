@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import {} from "./models/db.js";
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
+import { Category } from "./models/CategoryModel.js";
 
 const app = express();
 
@@ -134,6 +135,21 @@ app.delete('/products/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting product:', error);
     return res.status(500).json({ message: 'Failed to delete product' });
+  }
+});
+
+
+// API for Category Data
+// category page
+app.get('/category', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    console.log('Categories:', categories);
+    return res.json(categories);
+  }
+  catch (error) {
+    console.error('Error fetching categories:', error);
+    return res.status(500).json({ message: 'Failed to fetch categories' });
   }
 });
 

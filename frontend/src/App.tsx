@@ -14,6 +14,7 @@ import MainLayout from "./pages/main";
 import Products from "./pages/products";
 import ProductDetails from "./pages/productdetails";
 import ProtectedRoute from "./pages/commons/protect";
+import Category from "./pages/category";
 
 function App() {
   const [token, setToken] = useState("");
@@ -40,7 +41,7 @@ function App() {
           <Route index element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
           <Route path="/products/:id" element={<ProductDetails />}></Route>
-
+          <Route path="/category" element={<Category />}></Route>
           <Route path="/admin" element={<AdminDashboard>
           </AdminDashboard>}  >
             <Route index element={
