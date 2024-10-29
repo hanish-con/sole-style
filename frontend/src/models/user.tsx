@@ -15,5 +15,7 @@ export type Product = {
     stock: number,
     _id?: string,
     category: string,
+    subcategory: string, 
+    sizes: string,
     updatedAt?: string,
 };
