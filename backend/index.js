@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import {} from "./models/db.js";
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
+import { Category } from "./models/CategoryModel.js";
 
 const app = express();
 
@@ -26,6 +27,12 @@ const verifyToken = (req, res, next) => {
 
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
+
+  // Check for missing fields
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+  
   // console.log({ data: req.body });
   const user = await User.findOne({ email });
   if (user) {
@@ -42,6 +49,14 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
+
+  const { email, password } = req.body;
+
+   // Check for missing fields
+   if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
   // Check if the email exists
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -120,6 +135,21 @@ app.delete('/products/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting product:', error);
     return res.status(500).json({ message: 'Failed to delete product' });
+  }
+});
+
+
+// API for Category Data
+// category page
+app.get('/category', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    console.log('Categories:', categories);
+    return res.json(categories);
+  }
+  catch (error) {
+    console.error('Error fetching categories:', error);
+    return res.status(500).json({ message: 'Failed to fetch categories' });
   }
 });
 
