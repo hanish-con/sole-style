@@ -26,6 +26,12 @@ const verifyToken = (req, res, next) => {
 
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
+
+  // Check for missing fields
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+  
   // console.log({ data: req.body });
   const user = await User.findOne({ email });
   if (user) {
@@ -42,6 +48,14 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
+
+  const { email, password } = req.body;
+
+   // Check for missing fields
+   if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
   // Check if the email exists
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
