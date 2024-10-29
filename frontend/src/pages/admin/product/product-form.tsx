@@ -149,31 +149,37 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value)}
-                      value={CATEGORY_OPTIONS[0].value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select categories" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {
-                          CATEGORY_OPTIONS.map(c => <SelectItem key={c.value} value={c.value}>{ c.label}</SelectItem>)
-                        }
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+<FormField
+  control={form.control}
+  name="category"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Category</FormLabel>
+      <Select
+        onValueChange={(value) => field.onChange(value)}  // Update field value on selection change
+        value={field.value}  // Set the current selected value from the field
+      >
+        <FormControl>
+          <SelectTrigger>
+            <SelectValue placeholder="Select category" />  
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {
+            CATEGORY_OPTIONS.map(c => (
+              <SelectItem key={c.value} value={c.value}>
+                {c.label}  
+              </SelectItem>
+            ))
+          }
+        </SelectContent>
+      </Select>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
 <FormField
                 control={form.control}
