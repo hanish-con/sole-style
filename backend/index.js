@@ -5,6 +5,7 @@ import {} from "./models/db.js";
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
 import { Category } from "./models/CategoryModel.js";
+import {Review} from "./models/ReviewModel.js";
 
 const app = express();
 
@@ -157,6 +158,45 @@ app.get('/category', async (req, res) => {
   } catch (error) {
     console.error("Error fetching categories:", error);
     res.status(500).json({ message: "Failed to fetch categories" });
+  }
+});
+
+
+// Products by category
+app.get('/categories/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    const products = await Product.find({ category });
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found for this category' });
+    }
+    return res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    return res.status(500).json({ message: 'Failed to fetch products by category' });
+  }
+});
+
+
+
+app.get('/reviews/:productId', async (req, res) => {
+  try {
+    const reviews = await Review.find({ productId: req.params.productId });
+    return res.json(reviews);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return res.status(500).json({ message: 'Failed to fetch reviews' });
+  }
+});
+
+app.post('/reviews', async (req, res) => {
+  try {
+    const newReview = new Review(req.body);
+    const savedReview = await newReview.save();
+    return res.status(201).json(savedReview);
+  } catch (error) {
+    console.error('Error adding review:', error);
+    return res.status(500).json({ message: 'Failed to add review' });
   }
 });
 

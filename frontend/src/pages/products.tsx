@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent} from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading";
@@ -17,9 +17,17 @@ import PageContainer from "@/components/layout/page-container";
 //   images: string;
 //   stock:number;
 // }
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
+
+const categories = [
+  { key: "men", label: "Men" },
+  { key: "women", label: "Women" },
+  { key: "kids", label: "Kids" }]
 
 export default function Products() {
+  const { category } = useParams<{ category: string }>();
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,11 +35,17 @@ export default function Products() {
   const [page, setPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<string>("");
+
   useEffect(() => {
     const fetchProducts = async () => {
+      setError(null);
+      setLoading(true);
       try {
         console.log("Fetching products...");
-        const response = await fetch("http://localhost:3002/products", {
+        const endpoint = category ? `http://localhost:3002/categories/${category}` : "http://localhost:3002/products";
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -59,20 +73,67 @@ export default function Products() {
         setLoading(false);
       }
     };
-
+    setLoading(true);
     fetchProducts();
-  }, []);
+  }, [category, page]);
  // Calculate total pages
  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
 
- // Paginate the products for display on the current page
- const paginatedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+ const filteredProducts = products.filter((product) =>
+  product.name.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+// Sort the filtered products
+const sortedProducts = [...filteredProducts].sort((a, b) => {
+  if (sortOrder === "lowToHigh") {
+    return a.price - b.price;
+  } else if (sortOrder === "highToLow") {
+    return b.price - a.price;
+  }
+  return 0;
+});
+
+ const paginatedProducts = sortedProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+ 
   return (
     <PageContainer>
-    <div className="min-h-screen transition-colors">
-      <div className="text-center mb-5">
-      <Heading title={"Our shoes"} description={""}></Heading>
-      </div>
+      {/* Category Navigation */}
+      <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100 ">
+        {categories.map((cat) => (
+          <Button
+            key={cat.key}
+            variant={category === cat.key ? "default" : "outline"}
+            onClick={() => {
+              setPage(1); // Reset to page 1 on category change
+              navigate(`/categories/${cat.key}`);
+            }}
+          >
+            {cat.label}
+          </Button>
+        ))}
+      </nav>
+<div className="flex justify-between items-center mb-6 p-2 pl-0">
+  <input
+    type="text"
+    placeholder="Search by product name..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    className="p-2 border border-gray-300 rounded-md w-full max-w-md"
+  />
+  <select
+    value={sortOrder}
+    onChange={(e) => setSortOrder(e.target.value)}
+    className="p-2 border border-gray-300 rounded-md ml-4"
+  >
+    <option value="">Sort by Price</option>
+    <option value="lowToHigh">Price: Low to High</option>
+    <option value="highToLow">Price: High to Low</option>
+  </select>
+</div>
+      <div className="min-h-screen transition-colors">
+        <div className="text-center mb-5 " style={{ textTransform: "capitalize" }}>
+          <Heading title={`${category ? category : "Products"}' collections`} description={""}></Heading>
+        </div>
       
 
       <div className="p-6">
