@@ -42,6 +42,11 @@ function App() {
           <Route path="/products" element={<Products />}></Route>
           <Route path="/products/:id" element={<ProductDetails />}></Route>
           <Route path="/category" element={<Category />}></Route>
+          
+          <Route path="/categories/:category" element={<Products />} />
+          <Route path="/reviews/" element={<ProductDetails />}></Route>
+          <Route path="/reviews/:id" element={<ProductDetails />}></Route>
+
           <Route path="/admin" element={<AdminDashboard>
           </AdminDashboard>}  >
             <Route index element={

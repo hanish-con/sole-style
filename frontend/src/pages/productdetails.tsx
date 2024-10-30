@@ -5,13 +5,20 @@ import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardFooter, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardFooter, CardDescription, CardContent } from "@/components/ui/card";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 export default function ProductDetails() {
-  const { id } = useParams<{ id: string }>(); // Get product ID from URL
+  const { id } = useParams<{ id: string }>(); 
   const [product, setProduct] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -34,18 +41,60 @@ export default function ProductDetails() {
         setLoading(false);
       }
     };
-
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`http://localhost:3002/reviews/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch reviews");
+        }
+        const data = await response.json();
+        setReviews(data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    fetchReviews();
     fetchProductDetails();
   }, [id]);
+
+  const handleAddReview = async () => {
+    if (!rating || !comment) return;
+
+    try {
+      const response = await fetch(`http://localhost:3002/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: id,
+          customerId: `66f9ae7d3f7dc0d8d1dd1e02`,  //need attention here. change to customerID
+          rating,
+          comment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit review");
+      }
+
+      const newReview = await response.json();
+      setReviews([...reviews, newReview]);
+      setRating(0);
+      setComment("");
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
+  };
 
   if (loading) return <div>Loading product details...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-8">
-      <Card className="w-full max-w-4xl shadow-lg">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="md:w-1/2 flex justify-center items-center">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 space-y-8">
+      <Card className="w-full shadow-lg">
+        <div className="flex flex-col lg:flex-row">
+          <div className="lg:w-1/2  p-6 flex justify-center items-center">
             <img
 
               src={product.imageURL || "/placeholder.jpg"}
@@ -59,7 +108,7 @@ export default function ProductDetails() {
           /> */}
           </div>
 
-          <div className="md:w-1/2 p-4">
+          <div className="lg:w-1/2 p-6">
             <CardHeader>
               <Heading title={product.name} description={product.category} />
             </CardHeader>
@@ -86,7 +135,23 @@ export default function ProductDetails() {
                 </p>
               </div>
 
-              <div className="flex gap-4">
+              <div>
+                <Label className="font-semibold">Available Sizes:</Label>
+                <select
+                  value={selectedSize}
+                  onChange={(e) => setSelectedSize(e.target.value)}
+                  className="p-2 border rounded-md w-full"
+                >
+                  <option value="">Select Size</option>
+                  {product.sizes?.map((size: string) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* <div className="flex gap-4">
                 <div>
                   <Label className="font-semibold">Created At:</Label>
                   <p>{new Date(product.createdAt).toLocaleDateString()}</p>
@@ -95,7 +160,7 @@ export default function ProductDetails() {
                   <Label className="font-semibold">Updated At:</Label>
                   <p>{new Date(product.updatedAt).toLocaleDateString()}</p>
                 </div>
-              </div>
+              </div> */}
             </CardContent>
 
             <CardFooter className="flex justify-end gap-4 mt-6">
@@ -109,6 +174,61 @@ export default function ProductDetails() {
           </div>
         </div>
       </Card>
+      {/* Review Diplaying  */}
+      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+        <Heading title="Reviews" description="" />
+        {reviews.length === 0 ? (
+          <p className="text-sm text-gray-600">No reviews yet. Be the first to review this product.</p>
+        ) : (
+          <ul className="space-y-4 mt-4">
+            {reviews.map((review) => (
+              <li key={review._id} className="p-4 border rounded-lg shadow-sm">
+                <p className="text-sm font-bold">
+                  Rating:
+                  {[...Array(5)].map((_, index) => (
+                    <FontAwesomeIcon
+                      key={index}
+                      icon={faStar}
+                      className={index < review.rating ? 'text-yellow-500' : 'text-gray-300'}
+                    />
+                  ))}
+                </p>
+                <p className="text-lg">{review.comment}</p>
+                <p className="text-xs text-gray-500">
+                  Reviewed on {new Date(review.createdAt).toLocaleDateString()}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Review Adding.. */}
+      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+        <Heading title="Add a Review" description="" />
+        <div className="flex items-center mb-4 mt-4">
+          <label htmlFor="rating" className="font-bold mr-2">Rating:</label>
+          <select
+            id="rating"
+            value={rating}
+            onChange={(e) => setRating(parseInt(e.target.value))}
+            className="p-2 border rounded-md"
+          >
+            <option value="">Select Rating</option>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <option key={value} value={value}>{value}</option>
+            ))}
+          </select>
+        </div>
+        <textarea
+          placeholder="Write your review here..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="w-full p-2 border rounded-md mb-4"
+          rows={4}
+        />
+        <Button onClick={handleAddReview}>Submit Review</Button>
+      </div>
     </div>
   );
 }
