@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, CheckIcon, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Command,
@@ -13,10 +13,12 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 
 export default function MultiselectDropdown({ items, values, onChange }: { 
     items: Array<{ label: string, value: string }>,
+    values: string[],
     onChange: (v: string[]) => void,
 }) {
     const [selectedItems, setSelectedItems] = useState<string[]>(values);
@@ -67,10 +69,15 @@ export default function MultiselectDropdown({ items, values, onChange }: {
                                         key={item.label}
                                         onSelect={() => toggleItem(item.value)}
                                     >
-                                        <span className="flex items-center">
+                                        <span className="flex">
                                             {item.label}
                                             {selectedItems.includes(item.value) && (
-                                                <Check className="ml-auto h-4 w-4 text-green-500" />
+                                                <CheckIcon
+                                                    className={cn(
+                                                    "ml-auto h-4 w-4",
+                                                    "opacity-100"
+                                                    )}
+                                                />
                                             )}
                                         </span>
                                     </CommandItem>
