@@ -79,3 +79,16 @@ export async function deleteProduct(id: string): Promise<string | null> {
     }
 }
 
+export async function getFeaturedProducts(): Promise<Product[] | null> {
+    try {
+        const response = await fetch("http://localhost:3002/featured-products", {
+            method: "GET",
+            headers: { "Content-Type": "application/json"  }, 
+        });
+        const featuredProducts = await response.json();
+        return featuredProducts;
+    } catch (error) {
+        console.error("Error fetching featured products:", error);
+        return null;
+    }
+}

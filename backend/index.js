@@ -74,11 +74,20 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ token, user });
 });
 
+// old static route
+// app.get("/featured-products", verifyToken, async (req, res) => {
+//   const products = await Product.find({});
+//   return res.json(products);
+// });
 
-app.get("/featured-products", verifyToken, async (req, res) => {
-  // get featured products somehow
-  const products = await Product.find({});
-  return res.json(products);
+app.get("/featured-products", async (req, res) => {
+  try {
+    const products = await Product.aggregate([{ $sample: { size: 4 } }]);
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching featured products:", error);
+    res.status(500).json({ message: "Error fetching products" });
+  }
 });
 
 // product page
