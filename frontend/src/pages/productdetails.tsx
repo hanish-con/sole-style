@@ -19,6 +19,8 @@ export default function ProductDetails() {
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
   const [reviews, setReviews] = useState<any[]>([]);
+  const [quantity, setQuantity] = useState<number>(1);
+
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -133,6 +135,24 @@ export default function ProductDetails() {
                 <p className={product.stock > 0 ? "text-green-600" : "text-red-600"}>
                   {product.stock > 0 ? "In Stock" : "Out of Stock"}
                 </p>
+              </div>
+              <div>
+                <Label className="font-semibold">Quantity:</Label>
+                <div className="flex items-center gap-2">
+                  <Button onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))} disabled={quantity === 1}>
+                    -
+                  </Button>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                    className="w-12 text-center p-2 border rounded-md"
+                    min="1"
+                  />
+                  <Button onClick={() => setQuantity((prev) => prev + 1)}>
+                    +
+                  </Button>
+                </div>
               </div>
 
               <div>

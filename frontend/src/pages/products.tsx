@@ -132,7 +132,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
 </div>
       <div className="min-h-screen transition-colors">
         <div className="text-center mb-5 " style={{ textTransform: "capitalize" }}>
-          <Heading title={`${category ? category : "Products"}' collections`} description={""}></Heading>
+          <Heading title={`${category ? category : "Products"} collections`} description={""}></Heading>
         </div>
       
 
