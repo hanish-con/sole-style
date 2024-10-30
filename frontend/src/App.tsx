@@ -39,7 +39,8 @@ function App() {
         <Route path="/" element={<MainLayout token={token} user={user} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
-          <Route path="/products/:id" element={<ProductDetails />}></Route>
+          <Route path="/categories/:category" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetails />}></Route>
 
           <Route path="/admin" element={<AdminDashboard>
           </AdminDashboard>}  >

@@ -90,8 +90,23 @@ app.get('/products', async (req, res) => {
   }
 });
 
+// Products by category
+app.get('/categories/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    const products = await Product.find({ category });
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found for this category' });
+    }
+    return res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    return res.status(500).json({ message: 'Failed to fetch products by category' });
+  }
+});
+
 // productdetails page
-app.get("/products/:id", async (req, res) => {
+app.get("/product/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {

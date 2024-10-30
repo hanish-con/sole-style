@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent} from "@/components/ui/card"
+import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Heading } from "@/components/ui/heading";
 import { Product } from "@/models/user";
 //added line here....  // Use actual DataTable
@@ -17,9 +17,17 @@ import PageContainer from "@/components/layout/page-container";
 //   images: string;
 //   stock:number;
 // }
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
+
+const categories = [
+  { key: "men", label: "Men" },
+  { key: "women", label: "Women" },
+  { key: "kids", label: "Kids" }]
 
 export default function Products() {
+  const { category } = useParams<{ category: string }>();
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,11 +35,20 @@ export default function Products() {
   const [page, setPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<string>("");
+
   useEffect(() => {
     const fetchProducts = async () => {
+      setError(null);
+      setLoading(true);
+
       try {
         console.log("Fetching products...");
-        const response = await fetch("http://localhost:3002/products", {
+
+        const endpoint = category ? `http://localhost:3002/categories/${category}` : "http://localhost:3002/products";
+
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -50,84 +67,133 @@ export default function Products() {
         setTotalItems(data.length)
       } catch (error: unknown) {
         console.error("Fetch error:", error);
-        if(error instanceof Error){
+        if (error instanceof Error) {
           setError(error.message);
-        }else{
+        } else {
           setError("An Unknown error occured");
         }
       } finally {
         setLoading(false);
       }
     };
-
+    setLoading(true);
     fetchProducts();
-  }, []);
- // Calculate total pages
- const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  }, [category, page]);
+  // Calculate total pages
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
 
- // Paginate the products for display on the current page
- const paginatedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Paginate the products for display on the current page
+  // const paginatedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // [CHANGED] Sort products based on selected sort order
+const sortedProducts = [...products].sort((a, b) => {
+  if (sortOrder === "lowToHigh") {
+    return a.price - b.price;
+  } else if (sortOrder === "highToLow") {
+    return b.price - a.price;
+  }
+  return 0;
+});
+
+  const paginatedProducts = sortedProducts
+    .filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return (
     <PageContainer>
-    <div className="min-h-screen transition-colors">
-      <div className="text-center mb-5">
-      <Heading title={"Our shoes"} description={""}></Heading>
-      </div>
-      
+      {/* Category Navigation */}
+      <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100 ">
+        {categories.map((cat) => (
+          <Button
+            key={cat.key}
+            variant={category === cat.key ? "default" : "outline"}
+            onClick={() => {
+              setPage(1); // Reset to page 1 on category change
+              navigate(`/categories/${cat.key}`);
+            }}
+          >
+            {cat.label}
+          </Button>
+        ))}
+      </nav>
+<div className="flex justify-between items-center mb-6 p-2 pl-0">
+  <input
+    type="text"
+    placeholder="Search by product name..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    className="p-2 border border-gray-300 rounded-md w-full max-w-md"
+  />
+  <select
+    value={sortOrder}
+    onChange={(e) => setSortOrder(e.target.value)}
+    className="p-2 border border-gray-300 rounded-md ml-4"
+  >
+    <option value="">Sort by Price</option>
+    <option value="lowToHigh">Price: Low to High</option>
+    <option value="highToLow">Price: High to Low</option>
+  </select>
+</div>
+      <div className="min-h-screen transition-colors">
+        <div className="text-center mb-5 " style={{ textTransform: "capitalize" }}>
+          <Heading title={`${category ? category : "Products"}' collections`} description={""}></Heading>
+        </div>
 
-      <div className="p-6">
-        {loading ? (
-          <DataTableSkeleton columnCount={4} rowCount={10} /> 
-          // <div className="text-center text-blue-500 dark:text-blue-300">Loading...</div>
-        ) : error ? (
-          <div className="text-center text-red-500 dark:text-red-300">Error: {error}</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {paginatedProducts.map((product) => (
-              <Card key={product._id} className="shadow-md hover:shadow-lg transition-transform hover:scale-105">
-              
-                <img
-                  // src={product.images[0] || "/placeholder.jpg"}
-                  src={product.imageURL || "/placeholder.jpg"}
-                  alt={product.name}
-                  className="h-48 w-full object-cover rounded-t-lg"
-                />
 
-               
-                <CardHeader>
-                  <CardTitle >
-                    {product.name}
-                  </CardTitle>
-                  <CardDescription>
-                    ${product.price.toFixed(2)}
-                  </CardDescription>
-                </CardHeader>
 
-               
-                <CardContent>
-                  <p
-                    className={`${
-                      product.stock > 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                  </p>
-                </CardContent>
 
-                <CardFooter>
-                  <Link to={`/products/${product._id}`} className="w-full">
-                    <Button className="w-full">View Product</Button>
-                  </Link>
-                  <Link to={`/cart`}className="w-full ml-2">
-                    <Button className="w-full">Add to Cart</Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        )}
-        {/* Pagination Controls */}
-        <div className="flex justify-center mt-6 space-x-4">
+        <div className="p-6">
+          {loading ? (
+            <DataTableSkeleton columnCount={4} rowCount={4} />
+            // <div className="text-center text-blue-500 dark:text-blue-300">Loading...</div>
+          ) : error ? (
+            <div className="text-center text-red-500 dark:text-red-300">Error: {error}</div>
+          ) : paginatedProducts.length === 0 ? (
+            <div className="text-center text-black-600 dark:text-black-400 ">No products found </div>
+          ): (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {paginatedProducts.map((product) => (
+                <Card key={product._id} className="shadow-md hover:shadow-lg transition-transform hover:scale-105">
+
+                  <img
+                    // src={product.images[0] || "/placeholder.jpg"}
+                    src={product.imageURL || "/placeholder.jpg"}
+                    alt={product.name}
+                    className="h-48 w-full object-cover rounded-t-lg"
+                  />
+
+
+                  <CardHeader>
+                    <CardTitle >
+                      {product.name}
+                    </CardTitle>
+                    <CardDescription>
+                      ${product.price.toFixed(2)}
+                    </CardDescription>
+                  </CardHeader>
+
+
+                  <CardContent>
+                    <p
+                      className={`${product.stock > 0 ? "text-green-600" : "text-red-600"
+                        }`}
+                    >
+                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                    </p>
+                  </CardContent>
+
+                  <CardFooter>
+                    <Link to={`/product/${product._id}`} className="w-full">
+                      <Button className="w-full">View Product</Button>
+                    </Link>
+                    <Link to={`/cart`} className="w-full ml-2">
+                      <Button className="w-full">Add to Cart</Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-6 space-x-4">
             <Button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
@@ -145,8 +211,8 @@ export default function Products() {
             </Button>
           </div>
 
+        </div>
       </div>
-    </div>
     </PageContainer>
   );
 }
