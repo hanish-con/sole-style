@@ -27,6 +27,8 @@ import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
 import { CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS, SIZE_OPTIONS } from './product-table/product-table-filters';
 import { createOrUpdateProduct } from '@/utils/api';
+import MultiselectDropdown from '@/components/ui/multiselect';
+import { useState } from 'react';
 
 
 // const MAX_FILE_SIZE = 5000000;
@@ -97,7 +99,6 @@ export default function ProductForm({
   const navigate = useNavigate();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     await createOrUpdateProduct(values);
     navigate("/admin");
   }
@@ -150,38 +151,38 @@ export default function ProductForm({
                 )}
               />
 
-<FormField
-  control={form.control}
-  name="category"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Category</FormLabel>
-      <Select
-        onValueChange={(value) => field.onChange(value)}  // Update field value on selection change
-        value={field.value}  // Set the current selected value from the field
-      >
-        <FormControl>
-          <SelectTrigger>
-            <SelectValue placeholder="Select category" />  
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          {
-            CATEGORY_OPTIONS.map(c => (
-              <SelectItem key={c.value} value={c.value}>
-                {c.label}  
-              </SelectItem>
-            ))
-          }
-        </SelectContent>
-      </Select>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}  // Update field value on selection change
+                      value={field.value}  // Set the current selected value from the field
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {
+                          CATEGORY_OPTIONS.map(c => (
+                            <SelectItem key={c.value} value={c.value}>
+                              {c.label}
+                            </SelectItem>
+                          ))
+                        }
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
 
-<FormField
+              <FormField
                 control={form.control}
                 name="subcategory"
                 render={({ field }) => (
@@ -198,7 +199,7 @@ export default function ProductForm({
                       </FormControl>
                       <SelectContent>
                         {
-                          SUBCATEGORY_OPTIONS.map(sc => <SelectItem key={sc.value} value={sc.value}>{ sc.label}</SelectItem>)
+                          SUBCATEGORY_OPTIONS.map(sc => <SelectItem key={sc.value} value={sc.value}>{sc.label}</SelectItem>)
                         }
                       </SelectContent>
                     </Select>
@@ -207,43 +208,23 @@ export default function ProductForm({
                 )}
               />
 
-
-<FormField
-  control={form.control}
-  name="sizes" 
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Sizes</FormLabel>
-      <div>
-        {SIZE_OPTIONS.map(sizeOption => (
-          <div key={sizeOption.value}>
-            <input
-              type="checkbox"
-              value={sizeOption.value}
-              checked={field.value?.includes(sizeOption.value)} 
-              onChange={() => {
-                const newSizes = field.value ? [...field.value] : []; 
-                if (newSizes.includes(sizeOption.value)) {
-                 
-                  field.onChange(newSizes.filter(s => s !== sizeOption.value));
-                }
-                 else {
-                  newSizes.push(sizeOption.value);
-                  field.onChange(newSizes);
-                }
-              }}
-            />
-            {sizeOption.label} {/* Display the label for the size */}
-          </div>
-        ))}
-      </div>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+            <FormField
+              control={form.control}
+              name="sizes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sizes</FormLabel>
+                  <FormControl>
+                    <MultiselectDropdown items={SIZE_OPTIONS} values={field.value} onChange={(value) => field.onChange(value)}  />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} 
+              />
 
 
-                <FormField
+
+              <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
