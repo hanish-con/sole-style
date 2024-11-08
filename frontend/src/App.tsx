@@ -15,6 +15,7 @@ import Products from "./pages/products";
 import ProductDetails from "./pages/productdetails";
 import ProtectedRoute from "./pages/commons/protect";
 import Category from "./pages/category";
+import Cart from "./pages/cart";
 
 function App() {
   const [token, setToken] = useState("");
@@ -42,6 +43,7 @@ function App() {
           <Route path="/products" element={<Products />}></Route>
           <Route path="/products/:id" element={<ProductDetails />}></Route>
           <Route path="/category" element={<Category />}></Route>
+          <Route path="/cart" element={<Cart />}></Route>
           
           <Route path="/categories/:category" element={<Products />} />
           <Route path="/reviews/" element={<ProductDetails />}></Route>

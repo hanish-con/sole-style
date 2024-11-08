@@ -306,6 +306,11 @@ app.delete('/cart/:customerId/:productId', async (req, res) => {
   }
 });
 
+// Cart Page
+app.get('/cart', (req, res) => {
+  // console.log("Cart Page Called.");  
+  res.json({ message: 'Welcome to the Cart page' });
+});
 
 const PORT = process.env.PORT || 3002;
 
