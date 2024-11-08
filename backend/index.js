@@ -5,6 +5,7 @@ import {} from "./models/db.js";
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
 import { Category } from "./models/CategoryModel.js";
+import { Cart } from "./models/CartModel.js";
 import {Review} from "./models/ReviewModel.js";
 
 const app = express();
@@ -197,6 +198,21 @@ app.post('/reviews', async (req, res) => {
   } catch (error) {
     console.error('Error adding review:', error);
     return res.status(500).json({ message: 'Failed to add review' });
+  }
+});
+
+// Cart
+// Get cart for a specific user
+app.get('/cart/:customerId', async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ customerId: req.params.customerId }).populate('items.productId');
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+    res.json(cart);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    return res.status(500).json({ message: 'Failed to fetch cart' });
   }
 });
 
