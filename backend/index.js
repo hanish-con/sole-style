@@ -216,6 +216,43 @@ app.get('/cart/:customerId', async (req, res) => {
   }
 });
 
+// Add item to cart
+app.post('/cart/:customerId', async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    let cart = await Cart.findOne({ customerId: req.params.customerId });
+
+    if (!cart) {
+      cart = new Cart({ customerId: req.params.customerId, items: [] });
+    }
+
+    const existingItem = cart.items.find(item => item.productId.toString() === productId);
+
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.items.push({ productId, quantity });
+    }
+
+    // Recalculate total price
+    cart.totalPrice = cart.items.reduce((total, item) => {
+      return total + item.quantity * product.price;  // Assuming the product has a 'price' field
+    }, 0);
+
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error adding item to cart:', error);
+    return res.status(500).json({ message: 'Failed to add item to cart' });
+  }
+});
+
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
