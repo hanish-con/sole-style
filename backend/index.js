@@ -281,6 +281,32 @@ app.put('/cart/:customerId/:productId', async (req, res) => {
     return res.status(500).json({ message: 'Failed to update cart' });
   }
 });
+
+// Remove item from cart
+app.delete('/cart/:customerId/:productId', async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ customerId: req.params.customerId });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    cart.items = cart.items.filter(item => item.productId.toString() !== req.params.productId);
+
+    // Recalculate total price
+    cart.totalPrice = cart.items.reduce((total, item) => {
+      return total + item.quantity * item.productId.price;  
+    }, 0);
+
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error deleting item from cart:', error);
+    return res.status(500).json({ message: 'Failed to delete item from cart' });
+  }
+});
+
+
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
