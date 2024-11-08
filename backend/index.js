@@ -242,7 +242,7 @@ app.post('/cart/:customerId', async (req, res) => {
 
     // Recalculate total price
     cart.totalPrice = cart.items.reduce((total, item) => {
-      return total + item.quantity * product.price;  // Assuming the product has a 'price' field
+      return total + item.quantity * product.price;  
     }, 0);
 
     await cart.save();
@@ -253,6 +253,34 @@ app.post('/cart/:customerId', async (req, res) => {
   }
 });
 
+// Update item quantity in cart
+app.put('/cart/:customerId/:productId', async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const cart = await Cart.findOne({ customerId: req.params.customerId });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    const item = cart.items.find(item => item.productId.toString() === req.params.productId);
+
+    if (item) {
+      item.quantity = quantity;
+    }
+
+    // Recalculate total price
+    cart.totalPrice = cart.items.reduce((total, item) => {
+      return total + item.quantity * item.productId.price;  
+    }, 0);
+
+    await cart.save();
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error updating item quantity:', error);
+    return res.status(500).json({ message: 'Failed to update cart' });
+  }
+});
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
