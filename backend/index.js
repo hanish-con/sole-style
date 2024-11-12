@@ -73,10 +73,9 @@ app.post("/login", async (req, res) => {
   if (!passwordMatch) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
+
   // TODO: use jwt token or something ?
   const token = "123456789";  
-
-  // old
   res.status(200).json({ token, user }); 
 });  
 
@@ -208,10 +207,6 @@ app.post('/reviews', async (req, res) => {
 });
 
 // Cart API
-const products = [
-  { _id: '1', name: 'Example Product', price: 25, description: 'A sample product' }
-];
-
 // Add a product to cart
 app.post('/cart', async (req, res) => {
   const { productId, productName, productImage, productPrice, size, quantity } = req.body;
@@ -234,6 +229,7 @@ app.post('/cart', async (req, res) => {
   }
 });
 
+// CART GET API
 app.get('/cart', async (req, res) => {
   try {
     const cart = await Cart.find();
@@ -246,6 +242,7 @@ app.get('/cart', async (req, res) => {
   }
 });
 
+// GET API for Checkout
 app.get('/checkout', async (req, res) => {
   try {
     console.log("Checkout page called.");
@@ -255,17 +252,6 @@ app.get('/checkout', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch checkout' });
   }
 });
-
-// Logout route to clear session
-app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Failed to log out' });
-    }
-    res.json({ message: 'Logged out successfully' });
-  });
-});
-
 
 
 const PORT = process.env.PORT || 3002;
