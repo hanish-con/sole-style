@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 app.get("/", (req, res) => {
   res.json({ message: "hello from app root" });
 });
@@ -26,6 +27,8 @@ const verifyToken = (req, res, next) => {
   // set user details here
   next();
 }
+
+const cart = [];
 
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -71,9 +74,12 @@ app.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
   // TODO: use jwt token or something ?
-  const token = "123456789";
-  res.status(200).json({ token, user });
-});
+  const token = "123456789";  
+
+  // old
+  res.status(200).json({ token, user }); 
+});  
+
 
 // old static route
 // app.get("/featured-products", verifyToken, async (req, res) => {
@@ -201,116 +207,66 @@ app.post('/reviews', async (req, res) => {
   }
 });
 
-// Cart
-// Get cart for a specific user
-app.get('/cart/:customerId', async (req, res) => {
+// Cart API
+const products = [
+  { _id: '1', name: 'Example Product', price: 25, description: 'A sample product' }
+];
+
+// Add a product to cart
+app.post('/cart', async (req, res) => {
+  const { productId, productName, productImage, productPrice, size, quantity } = req.body;
+
   try {
-    const cart = await Cart.findOne({ customerId: req.params.customerId }).populate('items.productId');
-    if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
-    }
-    res.json(cart);
+    const newCartItem = new Cart({
+      productId,
+      productName,
+      productImage,
+      productPrice,
+      size,
+      quantity
+    });
+
+    await newCartItem.save();
+    res.status(201).json({ message: 'Product added to cart successfully', item: newCartItem });
+  } catch (error) {
+    console.error('Error adding product to cart:', error);
+    res.status(400).json({ error: 'Failed to add product to cart', details: error.message });
+  }
+});
+
+app.get('/cart', async (req, res) => {
+  try {
+    const cart = await Cart.find();
+    console.log(cart);
+    
+    res.status(200).json(cart);
   } catch (error) {
     console.error('Error fetching cart:', error);
-    return res.status(500).json({ message: 'Failed to fetch cart' });
+    res.status(500).json({ message: 'Failed to fetch cart items' });
   }
 });
 
-// Add item to cart
-app.post('/cart/:customerId', async (req, res) => {
+app.get('/checkout', async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
-    const product = await Product.findById(productId);
-    
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    let cart = await Cart.findOne({ customerId: req.params.customerId });
-
-    if (!cart) {
-      cart = new Cart({ customerId: req.params.customerId, items: [] });
-    }
-
-    const existingItem = cart.items.find(item => item.productId.toString() === productId);
-
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.items.push({ productId, quantity });
-    }
-
-    // Recalculate total price
-    cart.totalPrice = cart.items.reduce((total, item) => {
-      return total + item.quantity * product.price;  
-    }, 0);
-
-    await cart.save();
-    res.status(200).json(cart);
+    console.log("Checkout page called.");
+        res.status(200).json(cart);
   } catch (error) {
-    console.error('Error adding item to cart:', error);
-    return res.status(500).json({ message: 'Failed to add item to cart' });
+    console.error('Error fetching checkout:', error);
+    res.status(500).json({ message: 'Failed to fetch checkout' });
   }
 });
 
-// Update item quantity in cart
-app.put('/cart/:customerId/:productId', async (req, res) => {
-  try {
-    const { quantity } = req.body;
-    const cart = await Cart.findOne({ customerId: req.params.customerId });
-
-    if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+// Logout route to clear session
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to log out' });
     }
-
-    const item = cart.items.find(item => item.productId.toString() === req.params.productId);
-
-    if (item) {
-      item.quantity = quantity;
-    }
-
-    // Recalculate total price
-    cart.totalPrice = cart.items.reduce((total, item) => {
-      return total + item.quantity * item.productId.price;  
-    }, 0);
-
-    await cart.save();
-    res.status(200).json(cart);
-  } catch (error) {
-    console.error('Error updating item quantity:', error);
-    return res.status(500).json({ message: 'Failed to update cart' });
-  }
+    res.json({ message: 'Logged out successfully' });
+  });
 });
 
-// Remove item from cart
-app.delete('/cart/:customerId/:productId', async (req, res) => {
-  try {
-    const cart = await Cart.findOne({ customerId: req.params.customerId });
 
-    if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
-    }
-
-    cart.items = cart.items.filter(item => item.productId.toString() !== req.params.productId);
-
-    // Recalculate total price
-    cart.totalPrice = cart.items.reduce((total, item) => {
-      return total + item.quantity * item.productId.price;  
-    }, 0);
-
-    await cart.save();
-    res.status(200).json(cart);
-  } catch (error) {
-    console.error('Error deleting item from cart:', error);
-    return res.status(500).json({ message: 'Failed to delete item from cart' });
-  }
-});
-
-// Cart Page
-app.get('/cart', (req, res) => {
-  // console.log("Cart Page Called.");  
-  res.json({ message: 'Welcome to the Cart page' });
-});
 
 const PORT = process.env.PORT || 3002;
 
