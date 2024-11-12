@@ -20,6 +20,7 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
         // { title: "Admin", path: "/admin" },
+        { title: "Settings", path: "/settings" },
     ]
 
     const logout = (e) => {
