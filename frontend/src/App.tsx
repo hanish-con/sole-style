@@ -15,6 +15,10 @@ import Products from "./pages/products";
 import ProductDetails from "./pages/productdetails";
 import ProtectedRoute from "./pages/commons/protect";
 import Category from "./pages/category";
+import Cart from "./pages/cart";
+import Checkout from "./pages/checkout";
+
+
 
 function App() {
   const [token, setToken] = useState("");
@@ -42,6 +46,8 @@ function App() {
           <Route path="/products" element={<Products />}></Route>
           <Route path="/products/:id" element={<ProductDetails />}></Route>
           <Route path="/category" element={<Category />}></Route>
+          <Route path="/cart" element={<Cart />}></Route>
+          <Route path="/checkout" element={<Checkout />}></Route>
           
           <Route path="/categories/:category" element={<Products />} />
           <Route path="/reviews/" element={<ProductDetails />}></Route>
@@ -68,7 +74,6 @@ function App() {
         </Route>
       </Routes>
       {/* { (token || is_allowed(location.pathname)) &&  <Footer /> } */}
-
     </ThemeProvider>
 
   )

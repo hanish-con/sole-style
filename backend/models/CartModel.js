@@ -3,30 +3,33 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const cartSchema = new Schema({
-  customerId: {
+  productId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Product', // Reference to the Product model
     required: true
   },
-  items: [
-    {
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product', 
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        min: 1
-      }
-    }
-  ],
-  totalPrice: {
-    type: Number,
-    default: 0
+  productName: {
+    type: String,
+    required: true
   },
-  createdAt: {
+  productImage: {
+    type: String,
+    required: true
+  },
+  productPrice: {
+    type: Number,
+    required: true
+  },
+  size: {
+    type: String,
+    required: true
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1
+  },
+  addedAt: {
     type: Date,
     default: Date.now
   },

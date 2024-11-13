@@ -1,4 +1,4 @@
-import { Product, UserModel } from "@/models/user";
+import { Product, UserModel,CartItem } from "@/models/user";
 
 export async function registerUser(userData: UserModel) {
     const resp = await fetch("http://localhost:3002/register", {
@@ -89,6 +89,20 @@ export async function getFeaturedProducts(): Promise<Product[] | null> {
         return featuredProducts;
     } catch (error) {
         console.error("Error fetching featured products:", error);
+        return null;
+    }
+}
+
+export async function getCart(): Promise<CartItem[] | null> {
+    try {
+        const response = await fetch("http://localhost:3002/cart", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }, 
+        });
+        const cartItems = await response.json();
+        return cartItems;
+    } catch (error) {
+        console.error("Error fetching cart items:", error);
         return null;
     }
 }
