@@ -135,3 +135,17 @@ export async function deleteCartItem(productId: string): Promise<boolean> {
         return false;
     }
 }
+
+export async function updatePassword(data: { email: string, password: string}): Promise<UserModel | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/update-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

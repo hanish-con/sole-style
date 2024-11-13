@@ -14,14 +14,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { updatePassword } from "@/utils/api";
 
 
 const accountFormSchema = z.object({
   newPassword: z.string({
     required_error: "Please enter the password",
+  }).min(6, {
+    message: "Password must be atleast 6 characters",
   }),
   repeatPassword: z.string({
     required_error: "Please repeat the password",
+  }).min(6, {
+    message: "Password must be atleast 6 characters",
   }),
 }).refine((values) => {
   return values.newPassword === values.repeatPassword;
@@ -44,8 +49,10 @@ export function AccountForm() {
     defaultValues,
   })
 
-  function onSubmit(data: AccountFormValues) {
-    
+  async function onSubmit(data: AccountFormValues) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const updatedUser = await updatePassword({ email: user.email, password: data.newPassword });
+    console.log({ user, updatedUser });
     toast({
       title: "You submitted the following values:",
       description: (
@@ -60,23 +67,6 @@ export function AccountForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Your name" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is the name that will be displayed on your profile and in
-                emails.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
         <FormField
           control={form.control}
           name="newPassword"
@@ -84,7 +74,7 @@ export function AccountForm() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input placeholder="New Password" {...field} />
+                <Input type="password" placeholder="New Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +87,7 @@ export function AccountForm() {
             <FormItem>
               <FormLabel>Repeat Password</FormLabel>
               <FormControl>
-                <Input placeholder="Repeat Password" {...field} />
+                <Input type="password" placeholder="Repeat Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
