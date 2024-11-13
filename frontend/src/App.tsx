@@ -15,8 +15,11 @@ import Products from "./pages/products";
 import ProductDetails from "./pages/productdetails";
 import ProtectedRoute from "./pages/commons/protect";
 import Category from "./pages/category";
-import Cart from "./pages/cart";
+import SettingsProfilePage from "./pages/userprofile/profile";
+import SettingsLayout from "./pages/userprofile/settings";
+import SettingsAccountPage from "./pages/userprofile/account/account";
 import Checkout from "./pages/checkout";
+import Cart from "./pages/cart";
 
 
 
@@ -39,8 +42,8 @@ function App() {
 
       {/* { (token || is_allowed(location.pathname)) &&  <Header token={token} callback={(t: string) => setToken(t)} /> } */}
       <Routes>
-          <Route path="/login" element={<LoginForm callback={setUserAndToken} />}></Route>
-          <Route path="/signup" element={<SignUpForm />}></Route>
+        <Route path="/login" element={<LoginForm callback={setUserAndToken} />}></Route>
+        <Route path="/signup" element={<SignUpForm />}></Route>
         <Route path="/" element={<MainLayout token={token} user={user} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
@@ -48,12 +51,11 @@ function App() {
           <Route path="/category" element={<Category />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/checkout" element={<Checkout />}></Route>
-          
           <Route path="/categories/:category" element={<Products />} />
           <Route path="/reviews/" element={<ProductDetails />}></Route>
           <Route path="/reviews/:id" element={<ProductDetails />}></Route>
 
-          <Route path="/admin" element={<AdminDashboard>
+          <Route path="/admin" element={<AdminDashboard children={undefined}>
           </AdminDashboard>}  >
             <Route index element={
               <ProtectedRoute token={token}>
@@ -69,6 +71,16 @@ function App() {
             ></Route>
             {/* </Route> */}
           </Route>
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                  <SettingsLayout children={<SettingsProfilePage />} />
+              </ProtectedRoute>
+              }></Route>
+            <Route path="/accounts" element={
+              <ProtectedRoute>
+                <SettingsLayout children={<SettingsAccountPage />} />
+              </ProtectedRoute>
+              }></Route>
           <Route path="*" element={<NotFound />} />
 
         </Route>

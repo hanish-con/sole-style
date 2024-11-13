@@ -20,6 +20,7 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
         { title: "About", path: "/about" },
         { title: "Contact", path: "/contact" },
         // { title: "Admin", path: "/admin" },
+        // { title: "Settings", path: "/settings" },
     ]
 
     const logout = (e) => {
@@ -64,6 +65,15 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
                                 // if token is set show logout button
                                 token &&
                                 (
+                                    <li key="settings" className="text-gray-600 hover:text-violet-600">
+                                        <Link to="/settings">Settings</Link>
+                                    </li>
+                                )
+                            }
+                            {
+                                // if token is set show logout button
+                                token &&
+                                (
                                     <li key="logout" className="text-gray-600 hover:text-violet-600">
                                         <button onClick={logout}>Logout</button>
                                     </li>
@@ -86,8 +96,10 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
                     </div>
                     <div>
                         <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                            <AvatarFallback>CN</AvatarFallback>
+                            <Link to="/settings">
+                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Link>
                         </Avatar>
                     </div>
                 </div>
