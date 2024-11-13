@@ -326,6 +326,13 @@ app.post("/checkout", async (req, res) => {
   }
 });
 
+app.post('/update-password', async (req, res) => {
+  const data = req.body;
+  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const user = await User.findOneAndUpdate({ email: data.email }, { password: hashedPassword }, { new: true})
+  return res.json(user);
+});
+
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
