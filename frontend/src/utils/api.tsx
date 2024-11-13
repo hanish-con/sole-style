@@ -106,3 +106,32 @@ export async function getCart(): Promise<CartItem[] | null> {
         return null;
     }
 }
+
+export async function editCart(productId: string, quantity: number): Promise<CartItem | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/cart/${productId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity }),
+        });
+        if (!response.ok) throw new Error("Failed to update cart item");
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating cart item:", error);
+        return null;
+    }
+}
+
+export async function deleteCartItem(productId: string): Promise<boolean> {
+    try {
+        const response = await fetch(`http://localhost:3002/cart/${productId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!response.ok) throw new Error("Failed to delete cart item");
+        return true;
+    } catch (error) {
+        console.error("Error deleting cart item:", error);
+        return false;
+    }
+}

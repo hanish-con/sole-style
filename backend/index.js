@@ -242,6 +242,50 @@ app.get('/cart', async (req, res) => {
   }
 });
 
+// Update API for Cart
+app.patch('/cart/:productId', async (req, res) => {
+  const { productId } = req.params;
+  const { quantity } = req.body;
+
+  if (quantity < 1) {
+      return res.status(400).json({ message: "Quantity must be at least 1" });
+  }
+
+  try {
+      const updatedCartItem = await Cart.findOneAndUpdate(
+          { productId: productId },
+          { $set: { quantity: quantity } },
+          { new: true }
+      );
+
+      if (!updatedCartItem) {
+          return res.status(404).json({ message: "Item not found in cart" });
+      }
+
+      res.json(updatedCartItem);
+  } catch (error) {
+      console.error("Error updating cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// DELETE API for Cart
+app.delete('/cart/:productId', async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+      const deletedItem = await Cart.findOneAndDelete({ productId: productId });
+      if (!deletedItem) {
+          return res.status(404).json({ message: "Item not found in cart" });
+      }
+      res.json({ message: "Item deleted successfully", deletedItem });
+  } catch (error) {
+      console.error("Error deleting cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 // GET API for Checkout
 app.get('/checkout', async (req, res) => {
   try {
