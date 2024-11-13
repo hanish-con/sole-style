@@ -5,12 +5,14 @@ import {} from "./models/db.js";
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
 import { Category } from "./models/CategoryModel.js";
+import { Cart } from "./models/CartModel.js";
 import {Review} from "./models/ReviewModel.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 
 app.get("/", (req, res) => {
   res.json({ message: "hello from app root" });
@@ -25,6 +27,8 @@ const verifyToken = (req, res, next) => {
   // set user details here
   next();
 }
+
+const cart = [];
 
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -69,10 +73,12 @@ app.post("/login", async (req, res) => {
   if (!passwordMatch) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
+
   // TODO: use jwt token or something ?
-  const token = "123456789";
-  res.status(200).json({ token, user });
-});
+  const token = "123456789";  
+  res.status(200).json({ token, user }); 
+});  
+
 
 // old static route
 // app.get("/featured-products", verifyToken, async (req, res) => {
@@ -199,6 +205,98 @@ app.post('/reviews', async (req, res) => {
     return res.status(500).json({ message: 'Failed to add review' });
   }
 });
+
+// Cart API
+// Add a product to cart
+app.post('/cart', async (req, res) => {
+  const { productId, productName, productImage, productPrice, size, quantity } = req.body;
+
+  try {
+    const newCartItem = new Cart({
+      productId,
+      productName,
+      productImage,
+      productPrice,
+      size,
+      quantity
+    });
+
+    await newCartItem.save();
+    res.status(201).json({ message: 'Product added to cart successfully', item: newCartItem });
+  } catch (error) {
+    console.error('Error adding product to cart:', error);
+    res.status(400).json({ error: 'Failed to add product to cart', details: error.message });
+  }
+});
+
+// CART GET API
+app.get('/cart', async (req, res) => {
+  try {
+    const cart = await Cart.find();
+    console.log(cart);
+    
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    res.status(500).json({ message: 'Failed to fetch cart items' });
+  }
+});
+
+// Update API for Cart
+app.patch('/cart/:productId', async (req, res) => {
+  const { productId } = req.params;
+  const { quantity } = req.body;
+
+  if (quantity < 1) {
+      return res.status(400).json({ message: "Quantity must be at least 1" });
+  }
+
+  try {
+      const updatedCartItem = await Cart.findOneAndUpdate(
+          { productId: productId },
+          { $set: { quantity: quantity } },
+          { new: true }
+      );
+
+      if (!updatedCartItem) {
+          return res.status(404).json({ message: "Item not found in cart" });
+      }
+
+      res.json(updatedCartItem);
+  } catch (error) {
+      console.error("Error updating cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// DELETE API for Cart
+app.delete('/cart/:productId', async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+      const deletedItem = await Cart.findOneAndDelete({ productId: productId });
+      if (!deletedItem) {
+          return res.status(404).json({ message: "Item not found in cart" });
+      }
+      res.json({ message: "Item deleted successfully", deletedItem });
+  } catch (error) {
+      console.error("Error deleting cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+// GET API for Checkout
+app.get('/checkout', async (req, res) => {
+  try {
+    console.log("Checkout page called.");
+        res.status(200).json(cart);
+  } catch (error) {
+    console.error('Error fetching checkout:', error);
+    res.status(500).json({ message: 'Failed to fetch checkout' });
+  }
+});
+
 
 const PORT = process.env.PORT || 3002;
 

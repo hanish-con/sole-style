@@ -19,3 +19,13 @@ export type Product = {
     sizes: string,
     updatedAt?: string,
 };
+
+export interface CartItem {
+    _id: string;   
+    productId: string;    
+    productName: string;  
+    productImage: string; 
+    productPrice: number; 
+    size: string;         
+    quantity: number;     
+  }

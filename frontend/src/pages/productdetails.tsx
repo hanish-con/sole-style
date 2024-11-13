@@ -1,5 +1,6 @@
 // src/pages/product-details.tsx
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function ProductDetails() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
 
-
+  
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -70,7 +71,7 @@ export default function ProductDetails() {
         },
         body: JSON.stringify({
           productId: id,
-          customerId: `66f9ae7d3f7dc0d8d1dd1e02`,  //need attention here. change to customerID
+          customerId: `66f9ae7d3f7dc0d8d1dd1e02`,  
           rating,
           comment,
         }),
@@ -88,6 +89,39 @@ export default function ProductDetails() {
       console.error("Error submitting review:", error);
     }
   };
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:3002/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: id,
+          productName: product.name,       
+          productImage: product.imageURL,   
+          productPrice: product.price,      
+          size: selectedSize,
+          quantity,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to add product to cart");
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("Failed to add product to cart.");
+    }
+  };
+
+
+  
+  
 
   if (loading) return <div>Loading product details...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -187,9 +221,9 @@ export default function ProductDetails() {
               <Link to={`/products`} className="w-full ml-2">
                 <Button className="w-full">Back to products</Button>
               </Link>
-              <Link to={`/cart`} className="w-full ml-2">
-                <Button className="w-full">Add to Cart</Button>
-              </Link>
+              <Button className="w-full ml-2" onClick={handleAddToCart}>
+                Add to Cart
+              </Button>
             </CardFooter>
           </div>
         </div>
