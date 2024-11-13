@@ -13,7 +13,7 @@ export default function SettingsProfilePage() {
       </div>
       <Separator />
       <ProfileForm />
-      <Toaster />
+      {/* <Toaster /> */}
     </div>
   )
 }

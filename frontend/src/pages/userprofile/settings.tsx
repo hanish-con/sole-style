@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "./sidebar-nav";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: {title: string, description: string} = {
   title: "Forms",
@@ -63,6 +64,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
           <div className="flex-1 lg:max-w-2xl">{children}</div>
         </div>
       </div>
+      <Toaster />
     </>
   )
 }

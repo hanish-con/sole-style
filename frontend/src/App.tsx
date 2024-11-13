@@ -20,7 +20,6 @@ import SettingsLayout from "./pages/userprofile/settings";
 import SettingsAccountPage from "./pages/userprofile/account/account";
 import Checkout from "./pages/checkout";
 import Cart from "./pages/cart";
-import Checkout from "./pages/checkout";
 
 
 
@@ -72,8 +71,16 @@ function App() {
             ></Route>
             {/* </Route> */}
           </Route>
-          <Route path="/settings" element={<SettingsLayout children={<SettingsProfilePage />} />}></Route>
-          <Route path="/accounts" element={<SettingsLayout children={<SettingsAccountPage />} />}></Route>
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                  <SettingsLayout children={<SettingsProfilePage />} />
+              </ProtectedRoute>
+              }></Route>
+            <Route path="/accounts" element={
+              <ProtectedRoute>
+                <SettingsLayout children={<SettingsAccountPage />} />
+              </ProtectedRoute>
+              }></Route>
           <Route path="*" element={<NotFound />} />
 
         </Route>
