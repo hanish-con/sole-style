@@ -1,61 +1,35 @@
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-
-const orderSchema = new Schema({
-  customerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User', 
-    required: true
+const orderSchema = new mongoose.Schema({
+  personalDetails: {
+    type: Object,
+    required: true,
   },
-  items: [
-    {
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product', 
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        min: 1
-      },
-      price: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
-  totalPrice: {
+  address: {
+    type: Object,
+    required: true,
+  },
+  paymentInfo: {
+    type: Object,
+    required: true,
+  },
+  cartItems: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart', // assuming Cart is a model
+  }],
+  totalAmount: {
     type: Number,
     required: true,
-    min: 0
   },
-  status: {
+  shippingMethod: {
     type: String,
-    enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
-    default: 'Processing'
+    default: 'CreditCard',
   },
-  shippingAddress: {
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    zipCode: { type: String, required: true },
-    country: { type: String, required: true }
+  paymentStatus: {
+    type: String,
+    default: 'Pending',
   },
-  paymentId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Payment' 
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+}, { timestamps: true });
 
-export const Order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('Order', orderSchema);
+export { Order };

@@ -7,6 +7,7 @@ import { Product } from "./models/ProductModel.js";
 import { Category } from "./models/CategoryModel.js";
 import { Cart } from "./models/CartModel.js";
 import {Review} from "./models/ReviewModel.js";
+import {Order} from "./models/OrderModel.js";
 
 const app = express();
 
@@ -297,6 +298,33 @@ app.get('/checkout', async (req, res) => {
   }
 });
 
+app.post("/checkout", async (req, res) => {
+  try {
+    console.log("Received data:", req.body); // Log incoming data
+
+    const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod } = req.body;
+
+    if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const newOrder = new Order({
+      personalDetails,
+      address,
+      paymentInfo,
+      cartItems,
+      totalAmount,
+      shippingMethod: "CreditCard",
+      paymentStatus: "Pending",
+    });
+
+    await newOrder.save();
+    res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
+  } catch (error) {
+    console.error("Error placing order:", error);
+    res.status(500).json({ message: "Server error. Could not place the order." });
+  }
+});
 
 const PORT = process.env.PORT || 3002;
 
