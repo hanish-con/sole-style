@@ -54,11 +54,11 @@ export function AccountForm() {
     const updatedUser = await updatePassword({ email: user.email, password: data.newPassword });
     console.log({ user, updatedUser });
     toast({
-      title: "You submitted the following values:",
+      title: "Notification",
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <div className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <p className="text-white">Password updated successfully!</p>
+        </div>
       ),
     });
 

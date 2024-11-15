@@ -149,3 +149,28 @@ export async function updatePassword(data: { email: string, password: string}): 
         return null;
     }
 }
+
+export async function updateUserDetails(data: { 
+    firstName: string, 
+    lastName: string,
+    email: string,
+    address: {
+        street: string,
+        city: string,
+        state: string,
+        zipCode: string,
+        country: string,
+    },
+}): Promise<UserModel | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/user-details`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

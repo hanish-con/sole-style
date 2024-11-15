@@ -333,6 +333,12 @@ app.post('/update-password', async (req, res) => {
   return res.json(user);
 });
 
+app.post('/user-details', async (req, res) => {
+  const data = req.body;
+  const user = await User.findOneAndUpdate({ email: data.email }, { ...data }, { new: true})
+  return res.json(user);
+});
+
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
