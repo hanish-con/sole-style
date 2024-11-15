@@ -65,15 +65,6 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
                                 // if token is set show logout button
                                 token &&
                                 (
-                                    <li key="settings" className="text-gray-600 hover:text-violet-600">
-                                        <Link to="/settings">Settings</Link>
-                                    </li>
-                                )
-                            }
-                            {
-                                // if token is set show logout button
-                                token &&
-                                (
                                     <li key="logout" className="text-gray-600 hover:text-violet-600">
                                         <button onClick={logout}>Logout</button>
                                     </li>
@@ -95,12 +86,16 @@ export default function Header({ callback }: { callback: (_: string) => void }) 
                         </ul>
                     </div>
                     <div>
-                        <Avatar>
-                            <Link to="/settings">
-                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Link>
-                        </Avatar>
+                        {
+                            token && (
+                                    <Avatar>
+                                        <Link to="/settings">
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Link>
+                                    </Avatar>
+                            )
+                        }
                     </div>
                 </div>
             </nav>
