@@ -57,7 +57,7 @@ const Checkout: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const newErrors: Record<string,string>={};
     if (!validateName(personalDetails.name)) {
@@ -104,14 +104,36 @@ const Checkout: React.FC = () => {
       personalDetails,
       address,
       paymentInfo,
+      cartItems: JSON.parse(localStorage.getItem("cart") || "[]"),
+      totalAmount: 20, // neeed to update
+      shippingMethod: "CreditCard",
     };
-
-    // Implement your order submission logic here
-    console.log("Order Placed:", orderData);
-
-    // Redirect or show confirmation message as needed
-    alert("Order placed successfully!");
-    navigate("/"); // Redirect to homepage or confirmation page
+    try {
+      const response = await fetch("http://localhost:3002/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to place order.");
+      }
+  
+      const data = await response.json();
+      console.log("Order placed successfully:", data);
+      
+  
+      // Clear cart and navigate to the homepage
+      localStorage.removeItem("cart");
+      setTimeout(() => navigate("/"), 3000); // Redirect after 3 seconds
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error placing order:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    } 
   };
 
   // Handle order cancellation

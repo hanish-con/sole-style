@@ -339,6 +339,35 @@ app.post('/user-details', async (req, res) => {
   return res.json(user);
 });
 
+//order table API
+app.post("/order", async (req, res) => {
+  try {
+    console.log("Received data:", req.body); // Log incoming data
+
+    const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod } = req.body;
+
+    if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const newOrder = new Order({
+      personalDetails,
+      address,
+      paymentInfo,
+      cartItems,
+      totalAmount,
+      shippingMethod: "CreditCard",
+      paymentStatus: "Pending",
+    });
+
+    await newOrder.save();
+    res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
+  } catch (error) {
+    console.error("Error placing order:", error);
+    res.status(500).json({ message: "Server error. Could not place the order." });
+  }
+});
+
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
