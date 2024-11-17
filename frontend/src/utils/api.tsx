@@ -246,3 +246,64 @@ export async function getOrders(email: string): Promise<unknown | null> {
         return null;
     }
 }
+
+
+export async function getFavourites(email: string): Promise<unknown | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/favorites?email=${encodeURIComponent(email)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!response.ok) {
+            return null;
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+
+export async function addFavourite(email: string, productId: string): Promise<unknown | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/favorites/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, productId }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, message: errorData.message || "Failed to fetch orders" };
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function deleteFavourite(email: string, productId: string): Promise<unknown | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/favorites/remove`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, productId }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return null;
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
