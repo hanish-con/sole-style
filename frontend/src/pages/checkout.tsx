@@ -7,6 +7,7 @@ import { Toast } from "@radix-ui/react-toast";
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   // State for form inputs
   const [personalDetails, setPersonalDetails] = useState({
@@ -101,6 +102,7 @@ const Checkout: React.FC = () => {
 
     // Prepare data for submission
     const orderData = {
+      email: user.email, // to track the user
       personalDetails,
       address,
       paymentInfo,

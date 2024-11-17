@@ -226,3 +226,23 @@ export async function forgotPassword(email: string): Promise<{ success: boolean,
         return null; // Return null if an error occurs
     }
 }
+
+export async function getOrders(email: string): Promise<unknown | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/orders?email=${encodeURIComponent(email)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, message: errorData.message || "Failed to fetch orders" };
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
