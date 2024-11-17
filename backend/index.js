@@ -11,8 +11,13 @@ import {Order} from "./models/OrderModel.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import axios from 'axios';
+import mongoose from "mongoose";
+import jwt from 'jsonwebtoken';
 
 const app = express();
+
+const JWT_SECRET="123456";
+const JWT_EXPIRES_IN="1d";
 
 app.use(cors());
 app.use(express.json());
@@ -131,7 +136,12 @@ app.post("/login", async (req, res) => {
   }
 
   // TODO: use jwt token or something ?
-  const token = "123456789";  
+  const token = jwt.sign(
+    { id: user._id, email: user.email },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+
   res.status(200).json({ token, user }); 
 });  
 
@@ -501,22 +511,53 @@ app.post('/user-details', async (req, res) => {
   return res.json(user);
 });
 
+// //order table API
+// app.post("/order", async (req, res) => {
+//   try {
+//     console.log("Received data:", req.body); // Log incoming data
+
+//     const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod } = req.body;
+
+//     if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
+//       return res.status(400).json({ message: "All fields are required." });
+//     }
+
+//     const newOrder = new Order({
+//       personalDetails,
+//       address,
+//       paymentInfo,
+//       cartItems,
+//       totalAmount,
+//       shippingMethod: "CreditCard",
+//       paymentStatus: "Pending",
+//     });
+
+//     await newOrder.save();
+//     res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
+//   } catch (error) {
+//     console.error("Error placing order:", error);
+//     res.status(500).json({ message: "Server error. Could not place the order." });
+//   }
+// });
+
+
 //order table API
 app.post("/order", async (req, res) => {
   try {
     console.log("Received data:", req.body); // Log incoming data
 
-    const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod } = req.body;
+    const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod, email } = req.body;
 
     if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
     const newOrder = new Order({
+      email,
       personalDetails,
       address,
       paymentInfo,
-      cartItems,
+      cartItems: cartItems.map(x => new mongoose.Types.ObjectId(x)),
       totalAmount,
       shippingMethod: "CreditCard",
       paymentStatus: "Pending",
@@ -529,6 +570,59 @@ app.post("/order", async (req, res) => {
     res.status(500).json({ message: "Server error. Could not place the order." });
   }
 });
+
+
+
+app.get('/orders', async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    // Fetch all orders for the given email
+    const orders = await Order.find({ email })
+      .populate({
+        path: 'cartItems',
+        populate: {
+          path: 'productId', // Populate product details
+          model: 'Product', // Assuming 'Product' is the model name
+        },
+      });
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found for this email' });
+    }
+
+    // Transform data
+    const ordersData = orders.map(order => ({
+      orderId: order._id.toString(),
+      orderDate: order.createdAt.toISOString().split('T')[0], // Format as YYYY-MM-DD
+      status: order.paymentStatus || 'Pending',
+      estimatedDelivery: calculateEstimatedDelivery(order.createdAt),
+      items: order.cartItems.map(cartItem => ({
+        id: cartItem.productId._id, // Product ID
+        name: cartItem.productId.name, // Product name
+        quantity: cartItem.quantity, // Quantity of the product
+        price: `$${cartItem.productId.price.toFixed(2)}`, // Product price
+      })),
+      totalAmount: `$${order.totalAmount.toFixed(2)}`,
+    }));
+
+    res.status(200).json(ordersData);
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Helper function to calculate estimated delivery date
+function calculateEstimatedDelivery(orderDate) {
+  const estimatedDate = new Date(orderDate);
+  estimatedDate.setDate(estimatedDate.getDate() + 7); // Add 7 days for estimated delivery
+  return estimatedDate.toISOString().split('T')[0];
+}
 
 const PORT = process.env.PORT || 3002;
 
