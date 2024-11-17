@@ -9,7 +9,6 @@ export async function registerUser(userData: UserModel) {
     return resp;
 }
 
-
 export async function loginUser(userData: UserModel) {
     const resp = await fetch("http://localhost:3002/login", {
         method: "POST",
@@ -18,6 +17,8 @@ export async function loginUser(userData: UserModel) {
     });
     return resp;
 }
+
+
 
 export async function getProducts(filter): Promise<
 { totalProducts: number, products: Product[] } | null
@@ -172,5 +173,56 @@ export async function updateUserDetails(data: {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+export async function resetPassword(email: string, newPassword: string): Promise<{ success: boolean, message: string } | null> {
+    try {
+        const response = await fetch("http://localhost:3002/reset-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email, // Use the email from the function argument
+                newPassword: newPassword, // Use the new password from the function argument
+            }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Save the token (e.g., in localStorage or state)
+            const token = data.token; // Use the token from the response
+            console.log("Password reset successfully. Token:", token);
+            // Optionally, save token to localStorage for persistent session
+            localStorage.setItem('authToken', token);
+
+            return { success: true, message: data.message };
+        } else {
+            console.error("Error:", data.message);
+            return { success: false, message: data.message };
+        }
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        return null;
+    }
+}
+
+
+
+export async function forgotPassword(email: string): Promise<{ success: boolean, message: string } | null> {
+    try {
+        const response = await fetch("http://localhost:3002/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+
+        // Return the response success and message
+        return { success: data.success, message: data.message };
+    } catch (error) {
+        console.error(error);
+        return null; // Return null if an error occurs
     }
 }

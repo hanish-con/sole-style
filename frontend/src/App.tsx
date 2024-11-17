@@ -20,6 +20,8 @@ import SettingsLayout from "./pages/userprofile/settings";
 import SettingsAccountPage from "./pages/userprofile/account/account";
 import Checkout from "./pages/checkout";
 import Cart from "./pages/cart";
+import ResetPassword from "./pages/resetpassword";
+import ForgotPassword from "./pages/forgotpassword";
 import { SettingsOrderDetails } from "./pages/userprofile/order/order";
 
 
@@ -45,6 +47,9 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginForm callback={setUserAndToken} />}></Route>
         <Route path="/signup" element={<SignUpForm />}></Route>
+        <Route path="/reset-password" element={<ResetPassword />}></Route>
+        <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+        
         <Route path="/" element={<MainLayout token={token} user={user} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
