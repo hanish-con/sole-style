@@ -23,6 +23,7 @@ import Cart from "./pages/cart";
 import ResetPassword from "./pages/resetpassword";
 import ForgotPassword from "./pages/forgotpassword";
 import { SettingsOrderDetails } from "./pages/userprofile/order/order";
+import SettingsFavoriteProductsPage from "./pages/userprofile/favourites/favourite";
 
 
 
@@ -49,7 +50,7 @@ function App() {
         <Route path="/signup" element={<SignUpForm />}></Route>
         <Route path="/reset-password" element={<ResetPassword />}></Route>
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>
-        
+
         <Route path="/" element={<MainLayout token={token} user={user} setToken={setToken} ></MainLayout>}>
           <Route index element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
@@ -77,21 +78,26 @@ function App() {
             ></Route>
             {/* </Route> */}
           </Route>
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                  <SettingsLayout children={<SettingsProfilePage />} />
-              </ProtectedRoute>
-              }></Route>
-            <Route path="/accounts" element={
-              <ProtectedRoute>
-                <SettingsLayout children={<SettingsAccountPage />} />
-              </ProtectedRoute>
-              }></Route>
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <SettingsLayout children={<SettingsOrderDetails />} />
-              </ProtectedRoute>
-              }></Route>
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <SettingsLayout children={<SettingsProfilePage />} />
+            </ProtectedRoute>
+          }></Route>
+          <Route path="/accounts" element={
+            <ProtectedRoute>
+              <SettingsLayout children={<SettingsAccountPage />} />
+            </ProtectedRoute>
+          }></Route>
+          <Route path="/orders" element={
+            <ProtectedRoute>
+              <SettingsLayout children={<SettingsOrderDetails />} />
+            </ProtectedRoute>
+          }></Route>
+          <Route path="/favourites" element={
+            <ProtectedRoute>
+              <SettingsLayout children={<SettingsFavoriteProductsPage />} />
+            </ProtectedRoute>
+          }></Route>
           <Route path="*" element={<NotFound />} />
 
         </Route>

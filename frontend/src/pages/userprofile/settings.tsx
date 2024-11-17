@@ -22,7 +22,7 @@ const sidebarNavItems = [
   },
   {
     title: "Favourites",
-    href: "##",
+    href: "/favourites",
   },
 ]
 
