@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardFooter, CardDescription, CardContent } from "@/components/ui/card";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
+import { addFavourite, deleteFavourite, getFavourites } from "@/utils/api";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>(); 
@@ -21,6 +22,7 @@ export default function ProductDetails() {
   const [comment, setComment] = useState<string>("");
   const [reviews, setReviews] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   
   useEffect(() => {
@@ -56,8 +58,19 @@ export default function ProductDetails() {
         console.error("Error fetching reviews:", error);
       }
     };
+    const checkFavorite = async () => {
+      try {
+        const response = await getFavourites(user.email);
+        if (response.favorites.some(x => x._id === id)) {
+          setIsFavorite(true);
+        }
+      } catch (error) {
+        console.error("Error checking favorite:", error);
+      }
+    };
     fetchReviews();
     fetchProductDetails();
+    checkFavorite();
   }, [id]);
 
   const handleAddReview = async () => {
@@ -122,6 +135,21 @@ export default function ProductDetails() {
     } catch (error) {
       console.error("Error adding product to cart:", error);
       alert("Failed to add product to cart.");
+    }
+  };
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const handleFavoriteToggle = async () => {
+    try {
+      const api = isFavorite ? deleteFavourite : addFavourite;
+      const response = await api(user.email, id);
+
+      if (response !== null) {
+        setIsFavorite(!isFavorite);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
     }
   };
 
@@ -224,11 +252,16 @@ export default function ProductDetails() {
             </CardContent>
 
             <CardFooter className="flex justify-end gap-4 mt-6">
+              
               <Link to={`/products`} className="w-full ml-2">
                 <Button className="w-full">Back to products</Button>
               </Link>
               <Button className="w-full ml-2" onClick={handleAddToCart}>
                 Add to Cart
+              </Button>
+              <Button className="w-full ml-2" onClick={handleFavoriteToggle}>
+                <FontAwesomeIcon icon={isFavorite ? faStar : faStarHalfAlt} className="mr-2" />
+                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
               </Button>
             </CardFooter>
           </div>
