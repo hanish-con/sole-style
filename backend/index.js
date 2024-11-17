@@ -617,12 +617,57 @@ app.get('/orders', async (req, res) => {
   }
 });
 
-// Helper function to calculate estimated delivery date
+
 function calculateEstimatedDelivery(orderDate) {
   const estimatedDate = new Date(orderDate);
-  estimatedDate.setDate(estimatedDate.getDate() + 7); // Add 7 days for estimated delivery
+  estimatedDate.setDate(estimatedDate.getDate() + 7);
   return estimatedDate.toISOString().split('T')[0];
 }
+
+
+app.get('/favorites', async (req, res) => {
+  try {
+    const email = req.query.email;
+    const userWithFavorites = await User.findOne({ email })
+      .populate('favorites');
+
+    if (!userWithFavorites || userWithFavorites.favorites.length === 0) {
+      return res.status(404).json({ message: 'No favorites found' });
+    }
+
+    res.status(200).json({ favorites: userWithFavorites.favorites });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+
+app.post('/favorites/add', async (req, res) => {
+  try {
+    const { productId, email } = req.body;
+    const user = await User.findOne({ email }).populate('favorites');
+    if (!user.favorites.includes(productId)) {
+      user.favorites.push(productId);
+      await user.save();
+    }
+    res.status(200).json({ message: 'Product added to favorites' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.post('/favorites/remove', async (req, res) => {
+  try {
+    const { productId, email } = req.body;
+    const user = await User.findOne({ email });
+    user.favorites = user.favorites.filter((id) => id.toString() !== productId.toString());
+    await user.save();
+    res.status(200).json({ message: 'Product removed from favorites' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 3002;
 

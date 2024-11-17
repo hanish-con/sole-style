@@ -43,7 +43,13 @@ const userSchema = new Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  favorites: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Product',
+    },
+  ],
 });
 
 
