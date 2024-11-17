@@ -8,12 +8,14 @@ import { Category } from "./models/CategoryModel.js";
 import { Cart } from "./models/CartModel.js";
 import {Review} from "./models/ReviewModel.js";
 import {Order} from "./models/OrderModel.js";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+import axios from 'axios';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 
 app.get("/", (req, res) => {
   res.json({ message: "hello from app root" });
@@ -30,6 +32,59 @@ const verifyToken = (req, res, next) => {
 }
 
 const cart = [];
+
+//yp
+// Helper function to send the reset password email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'yashall123321@gmail.com',  // Your email
+    pass: 'imvlbadnvjtxxzib'               // Your app password or Gmail password
+  },
+  logger: true,  // Enable logging
+  debug: true    // Enable detailed debug logging
+});
+
+const sendResetEmail = async (email, token) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'yashall123321@gmail.com',  // Replace with your email
+      pass: 'imvlbadnvjtxxzib'    // Replace with your email password or app password
+    }
+  });
+
+//  const resetPasswordLink = `http://localhost:5173/reset-password?token=${token}`;
+//  const resetPasswordLink = `http://localhost:3000/reset-password?token=${token}`;
+  const resetPasswordLink = `http://localhost:5173/reset-password`;
+
+  const mailOptions = {
+    from: 'yashall123321@gmail.com',
+    to: email,
+    subject: 'Password Reset Request',
+    text: `To reset your password, click the following link: ${resetPasswordLink}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Error sending email: ', error);
+  }
+};
+
+app.get('/reset-password', (req, res) => {
+  const { token } = req.query;  // Get the token from the URL query parameter
+  
+  // Find the user by the reset token
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } }, (err, user) => {
+    if (err || !user) {
+      return res.status(400).send('Invalid or expired token');
+    }
+    
+    // If token is valid, show password reset form
+    res.render('reset-password', { userId: user._id });
+  });
+});
 
 app.post("/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -79,6 +134,113 @@ app.post("/login", async (req, res) => {
   const token = "123456789";  
   res.status(200).json({ token, user }); 
 });  
+
+
+
+
+//yp
+// Route to handle password reset request (send reset link to email)
+app.get('/forgot-password', (req, res) => {
+  console.log("forgot password called");
+});
+
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: "Email is required" });
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  // Generate a reset token (using crypto for example)
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  user.resetToken = resetToken;
+  await user.save();
+
+  // Send reset email with token
+  await sendResetEmail(email, resetToken);
+
+  res.status(200).json({ success: true, message: "Password reset link has been sent to your email" });
+});
+
+  
+app.get('/reset-password', (req, res) => {
+console.log("reset password called");
+console.log(req.body);
+
+});
+
+// Route to handle password reset
+// app.post("/reset-password", async (req, res) => {
+//   const { email, newPassword } = req.body;
+
+//   if (!email || !newPassword) {
+//     return res.status(400).json({ success: false, message: 'Email and new password are required.' });
+//   }
+
+//   try {
+//     // Find the user by email
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: 'User not found.' });
+//     }
+
+//     // Hash the new password
+//     const hashedPassword = await bcrypt.hash(newPassword, 10);
+//     user.password = hashedPassword;
+
+//     // Save the updated password
+//     await user.save();
+
+//     // Generate a token after password reset (similar to login)
+//     const token = "123456789";  // In a real application, generate a JWT token here
+    
+//     res.status(200).json({ success: true, message: 'Password reset successfully.', token, user });
+//   } catch (error) {
+//     console.error('Error resetting password:', error); // Log the error
+//     res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+//   }
+// });
+app.post("/reset-password", async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res.status(400).json({ success: false, message: 'Email and new password are required.' });
+  }
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    // Hash the new password (you can skip this if you are not hashing passwords)
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+  
+    //console.log("user: ",user);
+
+    // Save the updated password
+    await user.save();
+
+    // Generate a token (In your case, it's a static token)
+    const token = "123456789"; // This should ideally be a JWT token in a real app
+
+    // Send the token back along with the user details
+    res.status(200).json({ success: true, message: 'Password reset successfully.', token, user });
+  } catch (error) {
+    console.error('Error resetting password:', error); // Log the error
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+  }
+});
+
 
 
 // old static route
