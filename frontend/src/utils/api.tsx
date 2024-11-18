@@ -137,20 +137,6 @@ export async function deleteCartItem(productId: string): Promise<boolean> {
     }
 }
 
-export async function deleteCartItemById(id: string): Promise<boolean> {
-    try {
-        const response = await fetch(`http://localhost:3002/remove-cart/${id}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) throw new Error("Failed to delete cart item");
-        return true;
-    } catch (error) {
-        console.error("Error deleting cart item:", error);
-        return false;
-    }
-}
-
 export async function updatePassword(data: { email: string, password: string}): Promise<UserModel | null> {
     try {
         const response = await fetch(`http://localhost:3002/update-password`, {
@@ -250,7 +236,7 @@ export async function getOrders(email: string): Promise<unknown | null> {
 
         if (!response.ok) {
             const errorData = await response.json();
-            return null;
+            return { success: false, message: errorData.message || "Failed to fetch orders" };
         }
 
         const data = await response.json();
@@ -262,7 +248,7 @@ export async function getOrders(email: string): Promise<unknown | null> {
 }
 
 
-export async function getFavourites(email: string): Promise<{favorites: Product[]} | null> {
+export async function getFavourites(email: string): Promise<unknown | null> {
     try {
         const response = await fetch(`http://localhost:3002/favorites?email=${encodeURIComponent(email)}`, {
             method: "GET",
@@ -321,3 +307,20 @@ export async function deleteFavourite(email: string, productId: string): Promise
         return null;
     }
 }
+
+export async function createPaymentIntent(amount: number): Promise<string | null> {
+    try {
+      const response = await fetch('http://localhost:3002/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+  
+      const data = await response.json();
+      return data.clientSecret; // Return the client secret
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      return null;
+    }
+  }
+  

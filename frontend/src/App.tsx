@@ -25,7 +25,9 @@ import ForgotPassword from "./pages/forgotpassword";
 import { SettingsOrderDetails } from "./pages/userprofile/order/order";
 import SettingsFavoriteProductsPage from "./pages/userprofile/favourites/favourite";
 
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe("pk_test_51QMNsDEbIUYKEOl9F5f6497Nhqmo4SSN00IqCBBaGPWJ4gjV7k7g702RndLhoPIqyarmHrE0omnlcdTZfvJDPTty00nEoyDfmK");
 
 function App() {
   const [token, setToken] = useState("");
@@ -57,7 +59,11 @@ function App() {
           <Route path="/products/:id" element={<ProductDetails />}></Route>
           <Route path="/category" element={<Category />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
-          <Route path="/checkout" element={<Checkout />}></Route>
+          <Route path="/checkout" element={
+            <Elements stripe={stripePromise}>
+              <Checkout />
+            </Elements>
+          }></Route>
           <Route path="/categories/:category" element={<Products />} />
           <Route path="/reviews/" element={<ProductDetails />}></Route>
           <Route path="/reviews/:id" element={<ProductDetails />}></Route>

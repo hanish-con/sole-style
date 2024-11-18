@@ -86,7 +86,11 @@ const Cart: React.FC = () => {
   const estimatedtotal = calculateTotalWithTax();
 
   const handleCheckout = () => {
-    navigate("/checkout");
+    navigate("/checkout", {
+      state: {
+        totalAmount: estimatedtotal, 
+      },
+    });
   };
 
   return (

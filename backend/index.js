@@ -13,11 +13,14 @@ import crypto from "crypto";
 import axios from 'axios';
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
+import Stripe from "stripe";
 
 const app = express();
 
 const JWT_SECRET="123456";
 const JWT_EXPIRES_IN="1d";
+const stripe = process.env.API_KEY;
+
 
 app.use(cors());
 app.use(express.json());
@@ -183,6 +186,76 @@ console.log("reset password called");
 console.log(req.body);
 
 });
+
+app.get('/create-payment-intent', async (req, res) => {
+  console.log("called");
+});
+
+// payment gateway using stripe
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    // Create a PaymentIntent with the specified amount
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount, // The amount to be charged, in cents
+      currency: 'cad',
+    });
+
+    res.send({
+      clientSecret: paymentIntent.client_secret, // Send client secret to the frontend
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// new not working
+// app.post('/create-payment-intent', async (req, res) => {
+// const { amount, personalDetails, address, paymentInfo, cartItems, shippingMethod, email } = req.body;
+
+// try {
+//   // Validate required fields
+//   if (!amount || !personalDetails || !address || !cartItems || !email) {
+//     return res.status(400).json({ message: "All fields are required." });
+//   }
+
+//   // Create a PaymentIntent with Stripe
+//   const paymentIntent = await stripeClient.paymentIntents.create({
+//     amount, // Amount in cents
+//     currency: "cad",
+//   });
+
+//   // Insert order into the database
+//   const newOrder = new Order({
+//     email,
+//     personalDetails,
+//     address,
+//     paymentInfo: {
+//       ...paymentInfo, // Assuming paymentInfo contains necessary card or payment data
+//       paymentIntentId: paymentIntent.id, // Add Stripe PaymentIntent ID for reference
+//     },
+//     cartItems,
+//     totalAmount: amount / 100, // Convert cents to dollars
+//     shippingMethod,
+//     paymentStatus: "Pending", // Default payment status
+//   });
+
+//   await newOrder.save();
+// console.log("new order", newOrder);
+
+//   // Respond to client
+//   res.status(201).send({
+//     message: "Order created and PaymentIntent generated successfully.",
+//     clientSecret: paymentIntent.client_secret,
+//     orderId: newOrder._id,
+//   });
+// } catch (error) {
+//   console.error("Error creating PaymentIntent or saving order:", error);
+//   res.status(500).send({ error: "Server error. Could not create order." });
+// }
+// });
+
 
 // Route to handle password reset
 // app.post("/reset-password", async (req, res) => {
@@ -405,7 +478,7 @@ app.post('/cart', async (req, res) => {
 // CART GET API
 app.get('/cart', async (req, res) => {
   try {
-    const cart = await Cart.find({ active: true });
+    const cart = await Cart.find();
     console.log(cart);
     
     res.status(200).json(cart);
@@ -447,23 +520,7 @@ app.delete('/cart/:productId', async (req, res) => {
   const { productId } = req.params;
 
   try {
-      const deletedItem = await Cart.findOneAndDelete({ productId: new mongoose.Types.ObjectId(productId) });
-      if (!deletedItem) {
-          return res.status(404).json({ message: "Item not found in cart" });
-      }
-      res.json({ message: "Item deleted successfully", deletedItem });
-  } catch (error) {
-      console.error("Error deleting cart item:", error);
-      res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-// DELETE API for Cart
-app.delete('/remove-cart/:cartId', async (req, res) => {
-  const { cartId } = req.params;
-
-  try {
-      const deletedItem = await Cart.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(cartId) }, { active: false}, { new: true});
+      const deletedItem = await Cart.findOneAndDelete({ productId: productId });
       if (!deletedItem) {
           return res.status(404).json({ message: "Item not found in cart" });
       }
@@ -505,13 +562,6 @@ app.post("/checkout", async (req, res) => {
       shippingMethod: "CreditCard",
       paymentStatus: "Pending",
     });
-
-    // mark checked out cart items as inactive
-    const _updatedCartItem = await Cart.findOneAndUpdate(
-      { _id: { $in: cartItems.map(x => new mongoose.Types.ObjectId(x))} },
-      { $set: { active: false } },
-      { new: true }
-    );
 
     await newOrder.save();
     res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
@@ -614,9 +664,9 @@ app.get('/orders', async (req, res) => {
         },
       });
 
-    // if (orders.length === 0) {
-    //   return res.status(200).json([]);
-    // }
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found for this email' });
+    }
 
     // Transform data
     const ordersData = orders.map(order => ({
