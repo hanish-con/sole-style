@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@radix-ui/react-toast";
+import { deleteCartItem, deleteCartItemById } from "@/utils/api";
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
@@ -126,6 +127,9 @@ const Checkout: React.FC = () => {
       console.log("Order placed successfully:", data);
       
   
+      JSON.parse(localStorage.getItem("cart") || "[]").forEach(async x => {
+        console.log({ deleted: await deleteCartItemById(x)});
+      })
       // Clear cart and navigate to the homepage
       localStorage.removeItem("cart");
       setTimeout(() => navigate("/"), 3000); // Redirect after 3 seconds

@@ -109,11 +109,11 @@ export default function ProductDetails() {
       return;
     }
 
-    const cartItems = [...new Set([
-      ...(JSON.parse(localStorage.getItem('cart') || '[]')),
-      id,
-    ])];
-    localStorage.setItem('cart', JSON.stringify(cartItems));
+    // const cartItems = [...new Set([
+    //   ...(JSON.parse(localStorage.getItem('cart') || '[]')),
+    //   id,
+    // ])];
+    // localStorage.setItem('cart', JSON.stringify(cartItems));
   
     try {
       const response = await fetch(`http://localhost:3002/cart`, {
@@ -131,6 +131,14 @@ export default function ProductDetails() {
         }),
       });
       if (!response.ok) throw new Error("Failed to add product to cart");
+      const data = await response.json();
+      console.log({ data });
+      const cartItems = [...new Set([
+        ...(JSON.parse(localStorage.getItem('cart') || '[]')),
+        data.item._id,
+      ])];
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+
       alert("Product added to cart!");
     } catch (error) {
       console.error("Error adding product to cart:", error);
