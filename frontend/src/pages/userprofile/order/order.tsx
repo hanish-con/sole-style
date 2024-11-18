@@ -24,20 +24,20 @@ const orderData = {
   totalAmount: "$55.00",
 };
 
-const orders = [orderData, {...orderData, orderId: orderData.orderId + "1"}];
+// const orders = [orderData, {...orderData, orderId: orderData.orderId + "1"}];
 
 export function SettingsOrderDetails() {
   const user = JSON.parse(localStorage.getItem('user'));
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // const [orderData, setOrderDetails] = useState(null);
-  // useEffect(() => {
-  //   getOrders(user.email).then(x => {
-  //     console.log({ x });
-  //     setOrderDetails(x[x.length - 1])
-  //   });
-  // }, []);
+  const [orders, setOrderDetails] = useState([]);
+  useEffect(() => {
+    getOrders(user.email).then(x => {
+      console.log({ x });
+      setOrderDetails(x);
+    });
+  }, []);
   return (
     <div className="container mx-auto my-10 p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-8">Order Details</h1>

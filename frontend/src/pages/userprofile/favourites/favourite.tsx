@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 export default function SettingsFavoriteProductsPage() {
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const decoded = jwtDecode(localStorage.getItem('token'));
+    const decoded = jwtDecode<{email: string}>(localStorage.getItem('token'));
 
     const [favorites, setFavorites] = useState([]);
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function SettingsFavoriteProductsPage() {
             {favorites.length === 0 ? (
                 <p className="text-gray-600">You have no favorite products yet.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 gap-2">
                     {favorites.map((product) => (
                         <div
                             key={product._id}

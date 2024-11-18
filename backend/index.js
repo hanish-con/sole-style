@@ -405,7 +405,7 @@ app.post('/cart', async (req, res) => {
 // CART GET API
 app.get('/cart', async (req, res) => {
   try {
-    const cart = await Cart.find();
+    const cart = await Cart.find({ active: true });
     console.log(cart);
     
     res.status(200).json(cart);
@@ -447,7 +447,23 @@ app.delete('/cart/:productId', async (req, res) => {
   const { productId } = req.params;
 
   try {
-      const deletedItem = await Cart.findOneAndDelete({ productId: productId });
+      const deletedItem = await Cart.findOneAndDelete({ productId: new mongoose.Types.ObjectId(productId) });
+      if (!deletedItem) {
+          return res.status(404).json({ message: "Item not found in cart" });
+      }
+      res.json({ message: "Item deleted successfully", deletedItem });
+  } catch (error) {
+      console.error("Error deleting cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// DELETE API for Cart
+app.delete('/remove-cart/:cartId', async (req, res) => {
+  const { cartId } = req.params;
+
+  try {
+      const deletedItem = await Cart.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(cartId) }, { active: false}, { new: true});
       if (!deletedItem) {
           return res.status(404).json({ message: "Item not found in cart" });
       }
@@ -489,6 +505,13 @@ app.post("/checkout", async (req, res) => {
       shippingMethod: "CreditCard",
       paymentStatus: "Pending",
     });
+
+    // mark checked out cart items as inactive
+    const _updatedCartItem = await Cart.findOneAndUpdate(
+      { _id: { $in: cartItems.map(x => new mongoose.Types.ObjectId(x))} },
+      { $set: { active: false } },
+      { new: true }
+    );
 
     await newOrder.save();
     res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
@@ -591,9 +614,9 @@ app.get('/orders', async (req, res) => {
         },
       });
 
-    if (orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found for this email' });
-    }
+    // if (orders.length === 0) {
+    //   return res.status(200).json([]);
+    // }
 
     // Transform data
     const ordersData = orders.map(order => ({

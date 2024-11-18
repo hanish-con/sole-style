@@ -17,7 +17,7 @@ const cartItemSchema = new Schema({
     type: Number,
     required: true,
     min: 1
-  }
+  },
 });
 
 // module.exports = mongoose.model('CartItem', cartItemSchema);
