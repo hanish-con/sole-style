@@ -10,6 +10,8 @@ import { Card, CardHeader, CardFooter, CardDescription, CardContent } from "@/co
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import { addFavourite, deleteFavourite, getFavourites } from "@/utils/api";
+import { useToast } from "@/hooks/use-toast"; //
+import { Toaster } from "@/components/ui/toaster";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>(); 
@@ -23,6 +25,7 @@ export default function ProductDetails() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const { toast } = useToast();
 
   
   useEffect(() => {
@@ -139,10 +142,20 @@ export default function ProductDetails() {
       ])];
       localStorage.setItem('cart', JSON.stringify(cartItems));
 
-      alert("Product added to cart!");
+      // alert("Product added to cart!");
+      toast({
+        title: "Success",
+        description: "Product added to cart.",
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error adding product to cart:", error);
-      alert("Failed to add product to cart.");
+      // alert("Failed to add product to cart.");
+      toast({
+        title: "Failed",
+        description: "Product added to cart Failed.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -170,6 +183,7 @@ export default function ProductDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 space-y-8">
+      <Toaster />
       <Card className="w-full shadow-lg">
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-1/2  p-6 flex justify-center items-center">

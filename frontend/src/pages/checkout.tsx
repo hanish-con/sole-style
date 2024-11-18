@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,9 @@ import { deleteCartItem, deleteCartItemById } from "@/utils/api";
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const totalAmount = location.state?.totalAmount || 0; // Default to 0 if not provided
+
   const user = JSON.parse(localStorage.getItem('user'));
 
   // State for form inputs
@@ -108,7 +111,7 @@ const Checkout: React.FC = () => {
       address,
       paymentInfo,
       cartItems: JSON.parse(localStorage.getItem("cart") || "[]"),
-      totalAmount: 20, // neeed to update
+      totalAmount,
       shippingMethod: "CreditCard",
     };
     try {

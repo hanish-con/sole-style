@@ -7,6 +7,8 @@ import { Product } from "@/models/user";
 //added line here....  // Use actual DataTable
 import { DataTableSkeleton } from "@/components/layout/table/data-table-skeleton";  // For loading state
 import PageContainer from "@/components/layout/page-container";
+import { useToast } from "@/hooks/use-toast"; //
+import { Toaster } from "@/components/ui/toaster";
 
 
 // interface Product {
@@ -37,6 +39,7 @@ export default function Products() {
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -94,9 +97,52 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
 });
 
  const paginatedProducts = sortedProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+ const handleAddToCart = async (product:Product) => {
+  try {
+    const response = await fetch(`http://localhost:3002/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: product._id,
+        productName: product.name,       
+        productImage: product.imageURL,   
+        productPrice: product.price,      
+        size: 8,
+        quantity:1,
+      }),
+    });
+    if (!response.ok) throw new Error("Failed to add product to cart");
+    const data = await response.json();
+    console.log({ data });
+    const cartItems = [...new Set([
+      ...(JSON.parse(localStorage.getItem('cart') || '[]')),
+      data.item._id,
+    ])];
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+
+    // alert("Product added to cart!");
+    toast({
+      title: "Success",
+      description: "Product added to cart.",
+      variant: "success",
+    });
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    // alert("Failed to add product to cart.");
+    toast({
+      title: "Failed",
+      description: "Failed add to cart.",
+      variant: "destructive",
+    });
+  }
+};
  
   return (
     <PageContainer>
+      <Toaster />
       {/* Category Navigation */}
       <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100 ">
         {categories.map((cat) => (
@@ -179,8 +225,8 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
                   <Link to={`/products/${product._id}`} className="w-full">
                     <Button className="w-full">View Product</Button>
                   </Link>
-                  <Link to={`/cart`}className="w-full ml-2">
-                    <Button className="w-full">Add to Cart</Button>
+                  <Link to={``}className="w-full ml-2">
+                    <Button className="w-full" onClick={() => handleAddToCart(product)}>Add to Cart</Button>
                   </Link>
                 </CardFooter>
               </Card>
