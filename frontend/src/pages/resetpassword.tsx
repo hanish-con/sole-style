@@ -103,6 +103,18 @@ const ResetPassword = () => {
       <p className="text-green-600 text-center">Your password has been reset successfully.</p>
     ) : (
       <form onSubmit={handleResetPassword}>
+      <div className="mb-4">
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              className="mt-1"
+            />
+          </div>
         <div className="mb-4">
           <Label htmlFor="password">New Password</Label>
           <Input
