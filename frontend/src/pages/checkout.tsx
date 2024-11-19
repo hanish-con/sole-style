@@ -4,13 +4,25 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@radix-ui/react-toast";
-import { deleteCartItem, deleteCartItemById } from "@/utils/api";
+import { deleteCartItem, deleteCartItemById, createOrder  } from "@/utils/api";
+
+// Stripe integration imports
+import { loadStripe } from "@stripe/stripe-js";
+import {  Elements,  CardElement,  useStripe,  useElements} from "@stripe/react-stripe-js";
+
+// Stripe public key
+const stripePromise = loadStripe("pk_test_51QMNsDEbIUYKEOl9F5f6497Nhqmo4SSN00IqCBBaGPWJ4gjV7k7g702RndLhoPIqyarmHrE0omnlcdTZfvJDPTty00nEoyDfmK");
+
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const totalAmount = location.state?.totalAmount || 0;
-  const user = JSON.parse(localStorage.getItem('user'));
+//  const { cartItems, totalAmount } = location.state || {};
+  
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+//  const user = JSON.parse(localStorage.getItem('user'));
 
   // State for form inputs
   const [personalDetails, setPersonalDetails] = useState({
@@ -33,14 +45,20 @@ const Checkout: React.FC = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const [loading, setLoading] = useState(false);
+
+  const stripe = useStripe();
+  const elements = useElements();
+
   const validateName = (name: string): boolean => /^[A-Za-z ]{3,}$/.test(name);
   const validateEmail = (email: string): boolean =>/^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|icloud\.com)$/.test(email);
   const validatePostalCode = (postalCode: string): boolean => /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(postalCode);
   const validatePhone = (phone: string): boolean => /^\d{10}$/.test(phone);
-  const validateCardNumber = (cardNumber: string): boolean => /^\d{16}$/.test(cardNumber);
-  const validateCVV = (cvv: string): boolean => /^\d{3}$/.test(cvv);
-  const validateExpiryDate = (expiryDate: string): boolean => /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate);
-  const validateAddressField = (value: string) => /^[A-Za-z\s]{3,}$/.test(value);
+ // const validateCardNumber = (cardNumber: string): boolean => /^\d{16}$/.test(cardNumber);
+  //const validateCVV = (cvv: string): boolean => /^\d{3}$/.test(cvv);
+  //const validateExpiryDate = (expiryDate: string): boolean => /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate);
+//  const validateAddressField = (value: string) => /^[A-Za-z\s]{3,}$/.test(value);
+  const validateAddressField = (value: string) => /^[A-Za-z0-9\s,.'-]{3,}$/.test(value);
 
 
 
@@ -54,9 +72,10 @@ const Checkout: React.FC = () => {
       setPersonalDetails((prev) => ({ ...prev, [name]: value }));
     } else if (section === "address") {
       setAddress((prev) => ({ ...prev, [name]: value }));
-    } else if (section === "paymentInfo") {
-      setPaymentInfo((prev) => ({ ...prev, [name]: value }));
-    }
+    } 
+    // else if (section === "paymentInfo") {
+    //   setPaymentInfo((prev) => ({ ...prev, [name]: value }));
+    // }
     setErrors((prev)=>({...prev,[name]:""}));
   };
 
@@ -74,7 +93,7 @@ const Checkout: React.FC = () => {
       newErrors.phone = "Phone number must be exactly 10 digits.";
     }
     if (!validateAddressField(address.street)) {
-      newErrors.street = "Street must be at least 3 characters and contain only letters.";
+      newErrors.street = "Street must be at least 3 characters and contain valid characters.";
     }
     if (!validateAddressField(address.city)) {
       newErrors.city = "City must be at least 3 characters and contain only letters.";
@@ -88,20 +107,37 @@ const Checkout: React.FC = () => {
     if (!validateAddressField(address.country)) {
       newErrors.country = "Country must be at least 3 characters and contain only letters.";
     }
-    if (!validateCardNumber(paymentInfo.cardNumber)) {
-      newErrors.cardNumber = "Card number must be exactly 16 digits.";
-    }
-    if (!validateCVV(paymentInfo.cvv)) {
-      newErrors.cvv = "CVV must be exactly 3 digits.";
-    }
-    if (!validateExpiryDate(paymentInfo.expiryDate)) {
-      newErrors.expiryDate = "Expiry date must be in MM/YY format (e.g., 08/25).";
-    }
+    // if (!validateCardNumber(paymentInfo.cardNumber)) {
+    //   newErrors.cardNumber = "Card number must be exactly 16 digits.";
+    // }
+    // if (!validateCVV(paymentInfo.cvv)) {
+    //   newErrors.cvv = "CVV must be exactly 3 digits.";
+    // }
+    // if (!validateExpiryDate(paymentInfo.expiryDate)) {
+    //   newErrors.expiryDate = "Expiry date must be in MM/YY format (e.g., 08/25).";
+    // }
   
+    // If there are validation errors, show them and return
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
+    
+    // Check if Stripe and Elements are loaded
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    
+    if (!cardElement) return;
+    setLoading(true);
+    try {
+      // Create Payment Method with Stripe
+      const { token, error } = await stripe.createToken(cardElement);
+      if (error) {
+        throw new Error(error.message || "Payment method creation failed.");
+      }
 
     // Prepare data for submission
     const orderData = {
@@ -112,36 +148,47 @@ const Checkout: React.FC = () => {
       cartItems: JSON.parse(localStorage.getItem("cart") || "[]"),
       totalAmount,
       shippingMethod: "CreditCard",
+      paymentToken: token.id,  // Add the token from Stripe
     };
-    try {
-      const response = await fetch("http://localhost:3002/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to place order.");
+    
+    const currency = "CAD"; 
+    
+  //  const response = await createOrder(orderData.totalAmount, currency, orderData.paymentToken);
+  const response = await createOrder(
+    orderData.totalAmount,    // amount
+    currency,                 // currency
+    orderData.paymentToken,   // paymentToken
+    orderData.personalDetails, // personalDetails
+    orderData.address,         // address
+    orderData.paymentInfo     // paymentInfo (ensure it's passed)
+  );
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   throw new Error(errorData.message || "Failed to place order.");
+      // }
+      if (response === null) {
+        throw new Error("Failed to place order.");
       }
   
-      const data = await response.json();
-      console.log("Order placed successfully:", data);
+  //    const data = await response.json();
+      console.log("Order placed successfully:", response);
       
   
       JSON.parse(localStorage.getItem("cart") || "[]").forEach(async x => {
         console.log({ deleted: await deleteCartItemById(x)});
-      })
+      });
       // Clear cart and navigate to the homepage
       localStorage.removeItem("cart");
-      setTimeout(() => navigate("/"), 3000); // Redirect after 3 seconds
+      setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error placing order:", error.message);
       } else {
         console.error("Unexpected error:", error);
       }
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle order cancellation
@@ -241,7 +288,7 @@ const Checkout: React.FC = () => {
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <h2 className="text-lg font-semibold mb-2">PAYMENT INFORMATION</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
@@ -272,17 +319,30 @@ const Checkout: React.FC = () => {
               />
               {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
             </div>
+          </div> */}
+
+           <div>
+            <h2 className="text-lg font-semibold mb-2">PAYMENT DETAILS</h2>
+            <div className="mb-4">
+              <CardElement options={{ hidePostalCode: true }} />
+              {errors.card && <p className="text-red-500 text-sm">{errors.card}</p>}
+            </div>
           </div>
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button onClick={handleCancel} variant="outline">
-          Cancel Order
-        </Button>
-        <Button onClick={handleSubmit}>PLACE ORDER</Button>
-      </CardFooter>
-    </Card>
-  </div>
+          <Button onClick={handleCancel} variant="outline">
+            Cancel Order
+          </Button>
+          {/* <Button onClick={handleSubmit}>
+            PLACE ORDER
+          </Button> */}
+          <Button type="submit" onClick={handleSubmit} disabled={loading}>
+            {loading ? "Processing..." : `Pay ${totalAmount.toFixed(2)} CAD`}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
