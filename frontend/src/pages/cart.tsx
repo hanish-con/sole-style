@@ -14,7 +14,7 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
 
 
-  let shippingCost = 20;
+  const shippingCost = 20;
 
 
   const calculateTotal = (price: number, quantity: number): number => {
@@ -86,7 +86,7 @@ const Cart: React.FC = () => {
   const estimatedtotal = calculateTotalWithTax();
 
   const handleCheckout = () => {
-    navigate("/checkout");
+    navigate("/checkout",{ state: { totalAmount: estimatedtotal}});
   };
 
   return (
@@ -169,6 +169,7 @@ const Cart: React.FC = () => {
             <Button
               onClick={handleCheckout}
               className="w-full"
+              disabled={cartItems.length === 0}
             >
               CHECKOUT
             </Button>
