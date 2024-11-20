@@ -650,6 +650,7 @@ app.post('/user-details', async (req, res) => {
 //   }
 // });
 
+// working
 app.post("/order", async (req, res) => {
   
   const { 
@@ -663,6 +664,35 @@ app.post("/order", async (req, res) => {
   } = req.body;
 
   try {
+    // Fetch cart details from the database
+    const cart = await Cart.find({ _id: { $in: cartItems } });
+    if (!cart || cart.length === 0) {
+      return res.status(404).json({ error: "Cart items not found" });
+    }
+    // Initialize variables to calculate the subtotal
+    let subtotal = 0;
+    let orderDetails = '';
+    cart.forEach(item => {
+      const itemTotal = item.quantity * item.productPrice;
+      subtotal += itemTotal;
+
+      // Add row to table (product, quantity, price, total)
+      orderDetails += `
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 8px; text-align: center;">${item.productName}</td>
+        <td style="padding: 8px; text-align: center;">${item.quantity}</td>
+        <td style="padding: 8px; text-align: center;">$${item.productPrice.toFixed(2)}</td>
+        <td style="padding: 8px; text-align: center;">$${itemTotal.toFixed(2)}</td>
+      </tr>`;
+    });
+    // Fixed shipping cost and tax calculation
+    const shippingCost = 20;  // Fixed shipping cost
+    const salesTax = (subtotal * 0.13).toFixed(2);  // 13% sales tax
+    const totalWithTaxAndShipping = (subtotal + shippingCost + parseFloat(salesTax)).toFixed(2);  // Final total
+
+    const customer = await stripe.customers.create({
+      email: personalDetails.email,
+    });
     // Create a payment intent with Stripe
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(totalAmount * 100),  // Convert to cents
@@ -674,6 +704,7 @@ app.post("/order", async (req, res) => {
           token: paymentToken,  // Pass the token here
         },
       },
+      customer: customer.id,
       confirm: true,  // Automatically confirm the payment
       return_url: `http://localhost:5173/`
     });
@@ -695,6 +726,45 @@ app.post("/order", async (req, res) => {
     // console.log("new order : ", order);
 
     await order.save();
+
+    // Email sending logic with Nodemailer
+    const mailOptions = {
+      from: 'yashall123321@gmail.com', // Sender email
+      to: email, // Customer's email
+      subject: "Order Confirmation - SoleStyle",
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <div style="text-align: center; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">
+          <h1 style="color: #4CAF50;">Thank You for Your Order, ${personalDetails.name}!</h1>
+        </div>
+        <p style="font-size: 16px;">Your order has been successfully placed. Below are the details:</p>
+        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h2 style="color: #4CAF50; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Order Summary</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background-color: #4CAF50; color: white;">
+                <th style="padding: 8px; text-align: center;">Product</th>
+                <th style="padding: 8px; text-align: center;">Quantity</th>
+                <th style="padding: 8px; text-align: center;">Price</th>
+                <th style="padding: 8px; text-align: center;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${orderDetails}
+            </tbody>
+          </table>
+          <h3 style="color: #333; margin-top: 15px;">Subtotal: <span style="color: #4CAF50;">$${subtotal.toFixed(2)}</span></h3>
+          <h3 style="color: #333; margin-top: 5px;">Shipping Cost: <span style="color: #4CAF50;">$${shippingCost}</span></h3>
+          <h3 style="color: #333; margin-top: 5px;">Sales Tax (13%): <span style="color: #4CAF50;">$${salesTax}</span></h3>
+          <h3 style="color: #333; margin-top: 15px;">Total: <span style="color: #4CAF50;">$${totalWithTaxAndShipping}</span></h3>
+        </div>
+        <p style="font-size: 16px; color: #555;">We will notify you when your order is shipped. If you have any questions, please contact us at <a href="mailto:support@solestyle.com" style="color: #4CAF50; text-decoration: none;">support@solestyle.com</a>.</p>
+        <p style="font-size: 16px; color: #555;">Thank you for shopping with <strong style="color: #4CAF50;">SoleStyle</strong>!</p>
+      </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);  // Send email
 
     res.status(200).json({ message: "Order placed successfully", orderId: paymentIntent.id });
 
@@ -804,6 +874,103 @@ app.post('/favorites/remove', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+//cmnt
+// app.post("/order", async (req, res) => {
+//   const { 
+//     personalDetails, 
+//     address, 
+//     cartItems,  // Pass the cart ID or an array of cart IDs
+//     totalAmount, 
+//     email 
+//   } = req.body;
+
+//   try {
+//     // Fetch cart details from the database
+//     const cart = await Cart.find({ _id: { $in: cartItems } });
+//     if (!cart || cart.length === 0) {
+//       return res.status(404).json({ error: "Cart items not found" });
+//     }
+
+//     // Initialize variables to calculate the subtotal
+//     let subtotal = 0;  // This will hold the sum of item prices
+//     let orderDetails = '';  // This will hold the table rows for each product
+//     cart.forEach(item => {
+//       const itemTotal = item.quantity * item.productPrice;
+//       subtotal += itemTotal;
+
+//       // Add row to table (product, quantity, price, total)
+//       orderDetails += `
+//       <tr style="border-bottom: 1px solid #ddd;">
+//         <td style="padding: 8px; text-align: center;">${item.productName}</td>
+//         <td style="padding: 8px; text-align: center;">${item.quantity}</td>
+//         <td style="padding: 8px; text-align: center;">$${item.productPrice.toFixed(2)}</td>
+//         <td style="padding: 8px; text-align: center;">$${itemTotal.toFixed(2)}</td>
+//       </tr>`;
+//     });
+
+//     // Fixed shipping cost and tax calculation
+//     const shippingCost = 20;  // Fixed shipping cost
+//     const salesTax = (subtotal * 0.13).toFixed(2);  // Calculate 13% sales tax
+//     const totalWithTaxAndShipping = (subtotal + shippingCost + parseFloat(salesTax)).toFixed(2);  // Final total with tax and shipping
+
+//     // Example Nodemailer logic to send the email
+//     const mailOptions = {
+//       from: 'yashall123321@gmail.com', // Sender email
+//       to: email, // Customer's email
+//       subject: "Order Confirmation - SoleStyle",
+//       html: `
+//       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+//         <div style="text-align: center; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">
+//           <h1 style="color: #4CAF50;">Thank You for Your Order, ${personalDetails.name}!</h1>
+//         </div>
+//         <p style="font-size: 16px;">Your order has been successfully placed. Below are the details:</p>
+//         <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+//           <h2 style="color: #4CAF50; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Order Summary</h2>
+//           <table style="width: 100%; border-collapse: collapse;">
+//             <thead>
+//               <tr style="background-color: #4CAF50; color: white;">
+//                 <th style="padding: 8px; text-align: center;">Product</th>
+//                 <th style="padding: 8px; text-align: center;">Quantity</th>
+//                 <th style="padding: 8px; text-align: center;">Price</th>
+//                 <th style="padding: 8px; text-align: center;">Total</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               ${orderDetails}
+//             </tbody>
+//           </table>
+//           <h3 style="color: #333; margin-top: 15px;">Subtotal: <span style="color: #4CAF50;">$${subtotal.toFixed(2)}</span></h3>
+//           <h3 style="color: #333; margin-top: 5px;">Shipping Cost: <span style="color: #4CAF50;">$${shippingCost}</span></h3>
+//           <h3 style="color: #333; margin-top: 5px;">Sales Tax (13%): <span style="color: #4CAF50;">$${salesTax}</span></h3>
+//           <h3 style="color: #333; margin-top: 15px;">Total: <span style="color: #4CAF50;">$${totalWithTaxAndShipping}</span></h3>
+//         </div>
+//         <p style="font-size: 16px; color: #555;">We will notify you when your order is shipped. If you have any questions, please contact us at <a href="mailto:support@solestyle.com" style="color: #4CAF50; text-decoration: none;">support@solestyle.com</a>.</p>
+//         <p style="font-size: 16px; color: #555;">Thank you for shopping with <strong style="color: #4CAF50;">SoleStyle</strong>!</p>
+//       </div>
+//     `,
+//     };
+
+//     await transporter.sendMail(mailOptions);
+
+//     // Save the order in your database (optional)
+//     const order = new Order({
+//       email,
+//       personalDetails,
+//       address,
+//       cartItems,
+//       totalAmount,
+//       paymentStatus: "pending", // Set status as pending for now
+//     });
+
+//     await order.save();
+
+//     res.status(200).json({ message: "Order placed successfully and email sent!", orderId: order._id });
+//   } catch (error) {
+//     console.error("Error processing order:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 
 const PORT = process.env.PORT || 3002;
