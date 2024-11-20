@@ -412,7 +412,7 @@ app.post('/cart', async (req, res) => {
 app.get('/cart', async (req, res) => {
   try {
     const cart = await Cart.find({ active: true });
-    console.log(cart);
+    // console.log(cart);
     
     res.status(200).json(cart);
   } catch (error) {
@@ -484,7 +484,7 @@ app.delete('/remove-cart/:cartId', async (req, res) => {
 // GET API for Checkout
 app.get('/checkout', async (req, res) => {
   try {
-    console.log("Checkout page called.");
+    // console.log("Checkout page called.");
         res.status(200).json(cart);
   } catch (error) {
     console.error('Error fetching checkout:', error);
@@ -581,16 +581,16 @@ app.post('/user-details', async (req, res) => {
 //       return res.status(400).json({ message: "All fields are required." });
 //     }
 
-//     const newOrder = new Order({
-//       email,
-//       personalDetails,
-//       address,
-//       paymentInfo,
-//       cartItems: cartItems.map(x => new mongoose.Types.ObjectId(x)),
-//       totalAmount,
-//       shippingMethod: "CreditCard",
-//       paymentStatus: "Pending",
-//     });
+    // const newOrder = new Order({
+    //   email,
+    //   personalDetails,
+    //   address,
+    //   paymentInfo,
+    //   cartItems: cartItems.map(x => new mongoose.Types.ObjectId(x)),
+    //   totalAmount,
+    //   shippingMethod: "CreditCard",
+    //   paymentStatus: "Pending",
+    // });
 
 //     await newOrder.save();
 //     res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
@@ -655,7 +655,8 @@ app.post("/order", async (req, res) => {
     paymentInfo, 
     cartItems, 
     totalAmount, 
-    paymentToken 
+    paymentToken,
+    email, 
   } = req.body;
 
   try {
@@ -677,7 +678,7 @@ app.post("/order", async (req, res) => {
 
     // After successful payment, create an order in MongoDB
     const order = new Order({
-      email: personalDetails.email,
+      email,
       personalDetails,
       address,
       paymentInfo,
@@ -688,7 +689,7 @@ app.post("/order", async (req, res) => {
     });
 
     // Save the order to the database
-    console.log("new order : ", order);
+    // console.log("new order : ", order);
 
     await order.save();
 
