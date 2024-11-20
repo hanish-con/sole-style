@@ -267,7 +267,10 @@ app.post("/reset-password", async (req, res) => {
 
 app.get("/featured-products", async (req, res) => {
   try {
-    const products = await Product.aggregate([{ $sample: { size: 4 } }]);
+    const products = await Product.aggregate([
+      { $match: { featuredFlag: true } },  // Filter products with featuredFlag set to true
+      { $sample: { size: 4 } }             // Randomly select 4 featured products
+    ]);
     res.status(200).json(products);
   } catch (error) {
     console.error("Error fetching featured products:", error);
