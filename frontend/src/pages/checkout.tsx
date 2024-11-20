@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Toast } from "@radix-ui/react-toast";
+import * as Toast from "@radix-ui/react-toast";
 import { deleteCartItem, deleteCartItemById, createOrder } from "@/utils/api";
 
 // Stripe integration imports
@@ -12,6 +12,8 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Lottie from "lottie-react";
+import parcelAnimationData from "@/assets/Animation.json"; // Adjust the path if needed
 
 // Stripe public key
 const stripePromise = loadStripe("pk_test_51QMNsDEbIUYKEOl9F5f6497Nhqmo4SSN00IqCBBaGPWJ4gjV7k7g702RndLhoPIqyarmHrE0omnlcdTZfvJDPTty00nEoyDfmK");
@@ -49,6 +51,7 @@ const Checkout: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -184,7 +187,8 @@ const Checkout: React.FC = () => {
       });
       // Clear cart and navigate to the homepage
       localStorage.removeItem("cart");
-      setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
+      setShowToast(true);
+      setTimeout(() => {navigate("/")}, 5000); // Redirect after 2 seconds
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error placing order:", error.message);
@@ -203,6 +207,54 @@ const Checkout: React.FC = () => {
 
   return (
     <div className="max-h-screen p-8 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+      {/* Toast Notification */}
+      <Toast.Provider swipeDirection="right">
+        <Toast.Root
+          open={showToast}
+          onOpenChange={setShowToast}
+          className="fixed border border-yellow-500 rounded-lg shadow-lg p-6 text-gray-900 z-50"
+          style={{
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "450px",
+            backgroundColor: "#E8F5E9", // Subtle green background
+            color: "#1B5E20", // Dark green text
+            border: "2px solid #81C784", // Light green border for accent
+            borderRadius: "8px", // Slightly rounded corners
+            padding: "20px", // Add padding for better spacing
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Soft shadow for depth
+          }}          
+        >
+          <div className="text-center">
+            {/* Lottie Animated Parcel Icon */}
+            <Lottie
+              animationData={parcelAnimationData}
+              loop={false}
+              style={{ height: 100, margin: "0 auto" }}
+            />
+
+            {/* Toast Title */}
+            <Toast.Title className="font-bold text-2xl mt-4">
+              🎉 Order Placed Successfully!
+            </Toast.Title>
+
+            {/* Toast Description */}
+            <Toast.Description className="mt-4 text-sm">
+              Your order has been placed successfully. Redirecting to the homepage...
+            </Toast.Description>
+          </div>
+          {/* Close Button */}
+          <Toast.Close
+            className="absolute top-2 right-2 text-gold-400 hover:text-gold-300"
+            aria-label="Close"
+          >
+            ✕
+          </Toast.Close>
+        </Toast.Root>
+        <Toast.Viewport />
+      </Toast.Provider>
+
       <Card className="w-full max-w-6xl">
         <CardHeader>
           <h1 className="text-2xl font-bold text-center">CHECKOUT</h1>
