@@ -111,12 +111,6 @@ export default function ProductDetails() {
       alert("Please select a size.");
       return;
     }
-
-    // const cartItems = [...new Set([
-    //   ...(JSON.parse(localStorage.getItem('cart') || '[]')),
-    //   id,
-    // ])];
-    // localStorage.setItem('cart', JSON.stringify(cartItems));
   
     try {
       const response = await fetch(`http://localhost:3002/cart`, {
@@ -135,7 +129,7 @@ export default function ProductDetails() {
       });
       if (!response.ok) throw new Error("Failed to add product to cart");
       const data = await response.json();
-      console.log({ data });
+      // console.log({ data });
       const cartItems = [...new Set([
         ...(JSON.parse(localStorage.getItem('cart') || '[]')),
         data.item._id,

@@ -372,7 +372,9 @@ export async function createOrder(
     paymentToken: string,
     personalDetails: object,
     address: object,
-    paymentInfo: object
+    paymentInfo: object,
+    cartItems: string[],
+    email: string,
   ): Promise<string | null> {
     try {
       const response = await fetch('http://localhost:3002/order', {
@@ -385,7 +387,9 @@ export async function createOrder(
           personalDetails,      // Personal details (e.g., name, email)
           address,              // Address (e.g., shipping address)
           totalAmount: amount,   // Ensure the totalAmount is passed if required by your backend
-          paymentInfo             // Ensure paymentInfo is included in the request
+          paymentInfo,             // Ensure paymentInfo is included in the request
+          cartItems,
+          email,
         }),
       });
   
