@@ -49,7 +49,7 @@ export function SettingsOrderDetails() {
       {
         orderData &&
         orders.map((orderData, idx) => (
-          <Accordion key={orderData.orderId} type="single" collapsible className="w-full" defaultValue="4">
+          <Accordion key={orderData.orderId} type="single" collapsible className="w-full" defaultValue={(orders.length - 1).toString()}>
             <AccordionItem value={idx.toString()}>
               <AccordionTrigger>
                 <p className="text-md font-medium">OrderID: #{orderData.orderId}</p>
