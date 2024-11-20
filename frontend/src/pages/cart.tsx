@@ -84,10 +84,15 @@ const Cart: React.FC = () => {
   const subtotal = calculateSubtotal();
   const salesTotal = calculateSalesTax(subtotal);
   const estimatedtotal = calculateTotalWithTax();
-
+  // old working
+  // const handleCheckout = () => {
+  //   navigate("/checkout",{ state: { totalAmount: estimatedtotal}});
+  // };
+  // new
   const handleCheckout = () => {
-    navigate("/checkout",{ state: { totalAmount: estimatedtotal}});
+    navigate("/checkout", { state: { totalAmount: estimatedtotal, cartItems: cartItems } });
   };
+  
 
   return (
     <div className="min-h-screen p-8 flex flex-col items-center space-y-6">

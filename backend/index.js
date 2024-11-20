@@ -13,11 +13,17 @@ import crypto from "crypto";
 import axios from 'axios';
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
 const JWT_SECRET="123456";
 const JWT_EXPIRES_IN="1d";
+
+const stripe = new Stripe(process.env.API_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -563,34 +569,138 @@ app.post('/user-details', async (req, res) => {
 //   }
 // });
 
-
+//old
 //order table API
+// app.post("/order", async (req, res) => {
+//   try {
+//     console.log("Received data:", req.body); // Log incoming data
+
+//     const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod, email } = req.body;
+
+//     if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
+//       return res.status(400).json({ message: "All fields are required." });
+//     }
+
+//     const newOrder = new Order({
+//       email,
+//       personalDetails,
+//       address,
+//       paymentInfo,
+//       cartItems: cartItems.map(x => new mongoose.Types.ObjectId(x)),
+//       totalAmount,
+//       shippingMethod: "CreditCard",
+//       paymentStatus: "Pending",
+//     });
+
+//     await newOrder.save();
+//     res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
+//   } catch (error) {
+//     console.error("Error placing order:", error);
+//     res.status(500).json({ message: "Server error. Could not place the order." });
+//   }
+// });
+
+// new order api
+// app.post("/order", async (req, res) => {
+//   const { 
+//     personalDetails, 
+//     address, 
+//     paymentInfo, 
+//     cartItems, 
+//     totalAmount, 
+//     paymentToken,
+//   } = req.body;
+
+//   try {
+//     console.log("Stripe API Key:", process.env.API_KEY);
+//     // Create a payment intent with Stripe
+//     const paymentIntent = await stripe.paymentIntents.create({
+//       amount: totalAmount * 100, // Convert to cents
+//       currency: "usd", // or the currency you want to use
+//       description: "SoleStyle Order Payment",
+//       payment_method: paymentToken,
+//       confirm: true, // Automatically confirm the payment
+//     });
+
+//     // After successful payment, create an order in MongoDB
+//     const order = new Order({
+//       personalDetails,
+//       address,
+//       cartItems,
+//       totalAmount,
+//       paymentStatus: "success",
+//       paymentIntentId: paymentIntent.id,
+//     });
+
+//     // Save the order to the database
+//     await order.save();
+
+//     res.status(200).json({ message: "Order placed successfully", orderId: paymentIntent.id });
+
+//   } catch (error) {
+//     console.error("Error processing payment:", error);
+//     if (error.type === "StripeCardError") {
+//       // Handle card error
+//       return res.status(400).json({ error: error.message });
+//     }
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 app.post("/order", async (req, res) => {
+  
+  const { 
+    personalDetails, 
+    address, 
+    paymentInfo, 
+    cartItems, 
+    totalAmount, 
+    paymentToken 
+  } = req.body;
+
   try {
-    console.log("Received data:", req.body); // Log incoming data
+    // Create a payment intent with Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(totalAmount * 100),  // Convert to cents
+      currency: "CAD",  // Use CAD as currency
+      description: "SoleStyle Order Payment",
+      payment_method_data: {
+        type: "card",  // Specify that this is a card payment
+        card: {
+          token: paymentToken,  // Pass the token here
+        },
+      },
+      confirm: true,  // Automatically confirm the payment
+      return_url: `http://localhost:5173/`
+    });
+    
 
-    const { personalDetails, address, paymentInfo, cartItems, totalAmount, shippingMethod, email } = req.body;
-
-    if (!personalDetails || !address || !paymentInfo || !cartItems || !totalAmount || !shippingMethod) {
-      return res.status(400).json({ message: "All fields are required." });
-    }
-
-    const newOrder = new Order({
-      email,
+    // After successful payment, create an order in MongoDB
+    const order = new Order({
+      email: personalDetails.email,
       personalDetails,
       address,
       paymentInfo,
-      cartItems: cartItems.map(x => new mongoose.Types.ObjectId(x)),
+      cartItems,
       totalAmount,
-      shippingMethod: "CreditCard",
-      paymentStatus: "Pending",
+      paymentStatus: "success",
+      paymentIntentId: paymentIntent.id,
     });
 
-    await newOrder.save();
-    res.status(201).json({ message: "Order placed successfully.", orderId: newOrder._id });
+    // Save the order to the database
+    console.log("new order : ", order);
+
+    await order.save();
+
+    res.status(200).json({ message: "Order placed successfully", orderId: paymentIntent.id });
+
   } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ message: "Server error. Could not place the order." });
+    console.error("Error processing payment:", error);
+    if (error.type === "StripeCardError") {
+      // Handle card error
+      return res.status(400).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

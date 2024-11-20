@@ -321,3 +321,84 @@ export async function deleteFavourite(email: string, productId: string): Promise
         return null;
     }
 }
+
+
+// export const createOrder = async (orderData: any) => {
+//     try {
+//       const response = await fetch(`http://localhost:3002/order`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(orderData),
+//       });
+  
+//       if (!response.ok) {
+//         const errorData = await response.json();
+//         throw new Error(errorData.message || "Failed to place order.");
+//       }
+  
+//       return await response.json();
+//     } catch (error) {
+//       console.error("Error in createOrder:", error);
+//       throw error;
+//     }
+//   };
+  
+//   export async function createOrder(amount: number, currency: string = 'USD'): Promise<string | null> {
+//     try {
+//       const response = await fetch('http://localhost:3002/order', {
+//         method: 'POST', // Using POST to create an order
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ amount, currency }),
+//       });
+  
+//       const data = await response.json();
+//       if (response.ok) {
+//         return data.orderId; // Assuming the backend returns an order ID
+//       } else {
+//         console.error('Error creating order:', data.message || 'Unknown error');
+//         return null;
+//       }
+//     } catch (error) {
+//       console.error('Error creating order:', error);
+//       return null;
+//     }
+//   }
+  
+// Assuming you're exporting this from a file called `orderService.ts`
+
+export async function createOrder(
+    amount: number,
+    currency: string = 'CAD',
+    paymentToken: string,
+    personalDetails: object,
+    address: object,
+    paymentInfo: object
+  ): Promise<string | null> {
+    try {
+      const response = await fetch('http://localhost:3002/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,               // Total amount
+          currency,             // Currency (default to 'CAD')
+          paymentToken,         // Payment token (for payment processing)
+          personalDetails,      // Personal details (e.g., name, email)
+          address,              // Address (e.g., shipping address)
+          totalAmount: amount,   // Ensure the totalAmount is passed if required by your backend
+          paymentInfo             // Ensure paymentInfo is included in the request
+        }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        return data.orderId; // Assuming the backend returns an order ID
+      } else {
+        console.error('Error creating order:', data.message || 'Unknown error');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return null;
+    }
+  }
+  
