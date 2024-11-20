@@ -6,12 +6,13 @@ import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardFooter, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardFooter, CardDescription, CardContent,CardTitle } from "@/components/ui/card";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import { addFavourite, deleteFavourite, getFavourites } from "@/utils/api";
 import { useToast } from "@/hooks/use-toast"; //
 import { Toaster } from "@/components/ui/toaster"
+import Category from "./category";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>(); 
@@ -25,6 +26,7 @@ export default function ProductDetails() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const {toast} = useToast();
 
   
@@ -41,8 +43,13 @@ export default function ProductDetails() {
           throw new Error(errorData.message || "Failed to fetch product details");
         }
 
-        const data = await response.json();
-        setProduct(data);
+        const jsonResponse  = await response.json();
+        if (jsonResponse.success) {
+          setProduct(jsonResponse.data.product);
+          setRelatedProducts(jsonResponse.data.relatedProducts);
+        } else {
+          throw new Error("Failed to fetch product details");
+        }
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -87,7 +94,7 @@ export default function ProductDetails() {
         },
         body: JSON.stringify({
           productId: id,
-          customerId: `66f9ae7d3f7dc0d8d1dd1e02`,  
+          customerId:JSON.parse(localStorage.getItem("_id") || "[]"),  
           rating,
           comment,
         }),
@@ -180,6 +187,7 @@ export default function ProductDetails() {
 
   if (loading) return <div>Loading product details...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!product) return <div>No product details available.</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 space-y-8">
@@ -344,6 +352,37 @@ export default function ProductDetails() {
         />
         <Button onClick={handleAddReview}>Submit Review</Button>
       </div>
+      {/* Related Products Section */}
+      <div className="bg-white p-6 rounded-lg shadow-md w-full mt-6">
+        <Heading title="Related Products" description="" />
+        {relatedProducts.length === 0 ? (
+          <p className="text-sm text-gray-600">No related products found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+            {relatedProducts.map((relatedProduct) => (
+              <Card
+                key={relatedProduct._id}
+                className="shadow-md hover:shadow-lg transition-transform hover:scale-105"
+              >
+                <img
+                  src={relatedProduct.imageURL || "/placeholder.jpg"}
+                  alt={relatedProduct.name}
+                  className="h-48 w-full object-cover rounded-t-lg"
+                />
+                <CardHeader>
+                  <CardTitle>{relatedProduct.name}</CardTitle>
+                  <CardDescription>${relatedProduct.price.toFixed(2)}</CardDescription>
+                </CardHeader>
+                <CardFooter>
+                  <Link to={`/products/${relatedProduct._id}`} className="w-full">
+                    <Button className="w-full">View Product</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+        </div>
     </div>
   );
 }
