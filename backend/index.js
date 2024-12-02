@@ -388,10 +388,11 @@ app.post('/reviews', async (req, res) => {
 // Cart API
 // Add a product to cart
 app.post('/cart', async (req, res) => {
-  const { productId, productName, productImage, productPrice, size, quantity } = req.body;
+  const { email, productId, productName, productImage, productPrice, size, quantity } = req.body;
 
   try {
     const newCartItem = new Cart({
+      email,
       productId,
       productName,
       productImage,
@@ -411,7 +412,7 @@ app.post('/cart', async (req, res) => {
 // CART GET API
 app.get('/cart', async (req, res) => {
   try {
-    const cart = await Cart.find({ active: true });
+    const cart = await Cart.find({ email: req.query.email,  active: true });
     // console.log(cart);
     
     res.status(200).json(cart);
@@ -451,9 +452,10 @@ app.patch('/cart/:productId', async (req, res) => {
 // DELETE API for Cart
 app.delete('/cart/:productId', async (req, res) => {
   const { productId } = req.params;
+  const { email } = req.query;
 
   try {
-      const deletedItem = await Cart.findOneAndDelete({ productId: new mongoose.Types.ObjectId(productId) });
+      const deletedItem = await Cart.findOneAndDelete({ email, productId: new mongoose.Types.ObjectId(productId) });
       if (!deletedItem) {
           return res.status(404).json({ message: "Item not found in cart" });
       }
@@ -467,9 +469,10 @@ app.delete('/cart/:productId', async (req, res) => {
 // DELETE API for Cart
 app.delete('/remove-cart/:cartId', async (req, res) => {
   const { cartId } = req.params;
+  const { email } = req.query;
 
   try {
-      const deletedItem = await Cart.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(cartId) }, { active: false}, { new: true});
+      const deletedItem = await Cart.findOneAndUpdate({ email, _id: new mongoose.Types.ObjectId(cartId) }, { active: false}, { new: true});
       if (!deletedItem) {
           return res.status(404).json({ message: "Item not found in cart" });
       }

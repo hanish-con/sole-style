@@ -13,6 +13,9 @@ const Cart: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+
 
   const shippingCost = 20;
 
@@ -39,7 +42,7 @@ const Cart: React.FC = () => {
   useEffect(() => {
     const loadCartItems = async () => {
       try {
-        const items = await getCart();
+        const items = await getCart(user.email);
         if (items) {
           setCartItems(items);
         } else {
@@ -55,7 +58,7 @@ const Cart: React.FC = () => {
   }, []);
 
   const handleDelete = async (productId: string) => {
-    const success = await deleteCartItem(productId);
+    const success = await deleteCartItem(productId, user.email);
     if (success) {
       setCartItems((prevItems) => prevItems.filter((item) => item.productId !== productId));
     } else {

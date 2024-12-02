@@ -26,6 +26,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState<number>(1);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const {toast} = useToast();
+  
 
   
   useEffect(() => {
@@ -106,6 +107,9 @@ export default function ProductDetails() {
     }
   };
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+
   const handleAddToCart = async () => {
     if (!selectedSize) {
       alert("Please select a size.");
@@ -119,6 +123,7 @@ export default function ProductDetails() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          email: user.email,
           productId: id,
           productName: product.name,       
           productImage: product.imageURL,   
@@ -153,7 +158,7 @@ export default function ProductDetails() {
     }
   };
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
 
   const handleFavoriteToggle = async () => {
     try {
