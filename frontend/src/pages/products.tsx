@@ -41,6 +41,9 @@ export default function Products() {
   const [sortOrder, setSortOrder] = useState<string>("");
   const {toast} = useToast();
 
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
+
   useEffect(() => {
     const fetchProducts = async () => {
       setError(null);
@@ -108,6 +111,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        email: user.email,
         productId: product._id,
         productName: product.name,       
         productImage: product.imageURL,   

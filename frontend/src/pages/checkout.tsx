@@ -65,6 +65,7 @@ const Checkout: React.FC = () => {
   //const validateExpiryDate = (expiryDate: string): boolean => /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate);
   //  const validateAddressField = (value: string) => /^[A-Za-z\s]{3,}$/.test(value);
   const validateAddressField = (value: string) => /^[A-Za-z0-9\s,.'-]{3,}$/.test(value);
+  
 
 
 
@@ -182,7 +183,7 @@ const Checkout: React.FC = () => {
       // console.log("Order placed successfully:", response);
 
       JSON.parse(localStorage.getItem("cart") || "[]").forEach(async x => {
-        const deletedCartItem = await deleteCartItemById(x);
+        const deletedCartItem = await deleteCartItemById(x, user.email);
         // console.log({ deleted: deletedCartItem });
       });
       // Clear cart and navigate to the homepage

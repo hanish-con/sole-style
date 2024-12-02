@@ -94,9 +94,9 @@ export async function getFeaturedProducts(): Promise<Product[] | null> {
     }
 }
 
-export async function getCart(): Promise<CartItem[] | null> {
+export async function getCart(email: str): Promise<CartItem[] | null> {
     try {
-        const response = await fetch("http://localhost:3002/cart", {
+        const response = await fetch(`http://localhost:3002/cart?email=${email}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }, 
         });
@@ -123,9 +123,9 @@ export async function editCart(productId: string, quantity: number): Promise<Car
     }
 }
 
-export async function deleteCartItem(productId: string): Promise<boolean> {
+export async function deleteCartItem(productId: string, email: string): Promise<boolean> {
     try {
-        const response = await fetch(`http://localhost:3002/cart/${productId}`, {
+        const response = await fetch(`http://localhost:3002/cart/${productId}?email=${email}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
@@ -137,9 +137,9 @@ export async function deleteCartItem(productId: string): Promise<boolean> {
     }
 }
 
-export async function deleteCartItemById(id: string): Promise<boolean> {
+export async function deleteCartItemById(id: string, email: string): Promise<boolean> {
     try {
-        const response = await fetch(`http://localhost:3002/remove-cart/${id}`, {
+        const response = await fetch(`http://localhost:3002/remove-cart/${id}?email=${email}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
         });
