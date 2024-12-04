@@ -29,6 +29,7 @@ import { CATEGORY_OPTIONS, SUBCATEGORY_OPTIONS, SIZE_OPTIONS } from './product-t
 import { createOrUpdateProduct } from '@/utils/api';
 import MultiselectDropdown from '@/components/ui/multiselect';
 import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 // const MAX_FILE_SIZE = 5000000;
@@ -70,6 +71,7 @@ const formSchema = z.object({
     message: 'Description must be at least 10 characters.'
   }),
   _id: z.string(),
+  featuredFlag: z.boolean(),
 });
 
 export default function ProductForm({
@@ -79,6 +81,7 @@ export default function ProductForm({
   initialData: Product | null;
   pageTitle: string;
 }) {
+
   const defaultValues = {
     _id: initialData?._id || '',
     imageURL: initialData?.imageURL || '',
@@ -88,7 +91,8 @@ export default function ProductForm({
     sizes: initialData?.sizes || [], // 
     price: initialData?.price || 0,
     stock: initialData?.stock || 1,
-    description: initialData?.description || ''
+    description: initialData?.description || '',
+    featuredFlag: initialData?.featuredFlag || false,
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -259,6 +263,24 @@ export default function ProductForm({
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="featuredFlag"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='flex items-center space-x-2'>
+                      <FormLabel>Featured ?</FormLabel>
+                      <FormControl>
+                        <Checkbox id="featured-flag"
+                          checked={field.value}
+                          onCheckedChange={field.onChange} />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <FormField
               control={form.control}
@@ -278,7 +300,7 @@ export default function ProductForm({
               )}
             />
             <div className='flex h-5 items-center space-x-4 text-sm'>
-              <Button type="submit">Add Product</Button>
+              <Button type="submit">{ initialData?._id ? "Update Product": "Add Product" }</Button>
               <Button onClick={() => navigate("/admin")}>Cancel</Button>
             </div>
           </form>
