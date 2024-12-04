@@ -30,6 +30,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
   },
+  status: {
+    type: String,
+    default: 'Processing',
+  },
 }, { timestamps: true });
 
 const Order = mongoose.model('Order', orderSchema);

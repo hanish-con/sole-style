@@ -3,9 +3,9 @@ import { Card, CardHeader, CardFooter, CardContent } from "@/components/ui/card"
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { faShippingFast, faCalendar, faCartShopping, faCalendarCheck, faCalendarTimes, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faShippingFast, faCalendar, faCartShopping, faCalendarCheck, faCalendarTimes, faCalendarAlt, faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getOrders } from "@/utils/api";
+import { getOrders, updateOrder } from "@/utils/api";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronsUpDown } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -26,18 +26,29 @@ const orderData = {
 
 // const orders = [orderData, {...orderData, orderId: orderData.orderId + "1"}];
 
-export function SettingsOrderDetails() {
+export function SettingsOrderDetails({ edit }) {
   const user = JSON.parse(localStorage.getItem('user'));
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const [change, setChange] = useState(false);
+
   const [orders, setOrderDetails] = useState([]);
   useEffect(() => {
-    getOrders(user.email).then(x => {
+    getOrders(edit ? "all" : user.email).then(x => {
       console.log({ x });
       setOrderDetails(x);
     });
-  }, []);
+  }, [change]);
+
+  const updateOrder_ = async (id: string, status) => {
+    try {
+      await updateOrder(id, status);
+      setChange((e) => !e);
+    } catch(e) {
+      console.log(e);
+    }
+  }
   return (
     <div className="container mx-auto my-10 p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-8">Order Details</h1>
@@ -78,7 +89,7 @@ export function SettingsOrderDetails() {
                       <FontAwesomeIcon icon={faShippingFast} />
                       <div>
                         <p className="text-sm">Status</p>
-                        <Badge color={orderData.status === "Shipped" ? "green" : "yellow"}>{orderData.status}</Badge>
+                        <Badge color={orderData.status === "Processing" ? "yellow" : "green"}>{orderData.status }</Badge>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -113,9 +124,26 @@ export function SettingsOrderDetails() {
                     </CardFooter>
                   </Card>
                   <div className="flex justify-end space-x-4 mb-4 mr-4">
+                      {
+                        edit && 
+                        <Button variant={orderData.status === "shipped" ? "outline": "default"}
+                          disabled={orderData.status === "shipped" || orderData.status === "cancelled"} className="w-full md:w-auto" onClick={() => updateOrder_(orderData.orderId, "shipped")}>
+                          <FontAwesomeIcon icon={faShippingFast} />
+                          Ship
+                        </Button>
+                      }
                     <Button variant="outline" className="w-full md:w-auto">
+                      <FontAwesomeIcon icon={faMicrophone} />
                       Contact Support
                     </Button>
+                      {
+                        !edit && 
+                        <Button variant="destructive" className="w-full md:w-auto"
+                          disabled={orderData.status === "cancelled"} 
+                          onClick={() => updateOrder_(orderData.orderId, "cancelled")}>
+                          Cancel
+                        </Button>
+                      }
                     {/* <Button variant="default" color="primary" className="w-full md:w-auto">
                       Track Shipment
                     </Button> */}
