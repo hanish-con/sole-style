@@ -18,6 +18,7 @@ export type Product = {
     subcategory: string, 
     sizes: string,
     updatedAt?: string,
+    featuredFlag: boolean,
 };
 
 export interface CartItem {

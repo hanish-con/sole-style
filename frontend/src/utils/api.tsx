@@ -39,7 +39,7 @@ export async function getProducts(filter): Promise<
 };
 
 
-export async function getProductByID(id: string): Promise<Product | null> {
+export async function getProductByID(id: string): Promise<{ data: { product: Product } } | null> {
     try {
         const response = await fetch(`http://localhost:3002/products/${id}`, {
             method: "GET",

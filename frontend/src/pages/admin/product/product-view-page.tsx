@@ -22,7 +22,7 @@ export default function ProductViewPage() {
 
   useEffect(() => {
     if (productId !== "new") {
-      getProductByID(productId!).then(product => setProduct(product!));
+      getProductByID(productId!).then(data => setProduct(data.data.product!));
     }
   }, [productId]);
 
