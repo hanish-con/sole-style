@@ -47,6 +47,10 @@ const productSchema = new Schema({
     type: String,
     default: "https://m.media-amazon.com/images/I/618IK6sSdmL._AC_SY695_.jpg",
   },
+  featuredFlag: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
