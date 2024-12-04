@@ -27,6 +27,7 @@ import SettingsFavoriteProductsPage from "./pages/userprofile/favourites/favouri
 // Stripe
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import AdminSettingsLayout from "./pages/admin/settings";
 const stripePromise = loadStripe("pk_test_51QMNsDEbIUYKEOl9F5f6497Nhqmo4SSN00IqCBBaGPWJ4gjV7k7g702RndLhoPIqyarmHrE0omnlcdTZfvJDPTty00nEoyDfmK");
 
 
@@ -74,9 +75,15 @@ function App() {
           </AdminDashboard>}  >
             <Route index element={
               <ProtectedRoute token={token}>
-                <ProductPage></ProductPage>
+                <AdminSettingsLayout
+                  children={ <ProductPage></ProductPage> } />
               </ProtectedRoute>
-
+            }></Route>
+            <Route path="orders" element={
+              <ProtectedRoute token={token}>
+                <AdminSettingsLayout
+                  children={ <SettingsOrderDetails edit={true}></SettingsOrderDetails> } />
+              </ProtectedRoute>
             }></Route>
             <Route path="product/:productId" element={
               <ProtectedRoute token={token}>
@@ -98,7 +105,7 @@ function App() {
           }></Route>
           <Route path="/orders" element={
             <ProtectedRoute>
-              <SettingsLayout children={<SettingsOrderDetails />} />
+              <SettingsLayout children={<SettingsOrderDetails edit={false} />} />
             </ProtectedRoute>
           }></Route>
           <Route path="/favourites" element={

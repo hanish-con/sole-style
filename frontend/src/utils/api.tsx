@@ -406,3 +406,24 @@ export async function createOrder(
     }
   }
   
+
+  export async function updateOrder(id: string, status: string): Promise<unknown | null> {
+    try {
+        const response = await fetch(`http://localhost:3002/orders`, {
+            method: "PATCH",
+            body: JSON.stringify({ id, status }),
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return null;
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

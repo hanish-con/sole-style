@@ -733,6 +733,7 @@ app.post("/order", async (req, res) => {
       totalAmount,
       paymentStatus: "success",
       paymentIntentId: paymentIntent.id,
+      status: "Processing",
     });
 
     // Save the order to the database
@@ -801,15 +802,29 @@ app.get('/orders', async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    // Fetch all orders for the given email
-    const orders = await Order.find({ email })
-      .populate({
-        path: 'cartItems',
-        populate: {
-          path: 'productId', // Populate product details
-          model: 'Product', // Assuming 'Product' is the model name
-        },
-      });
+    let orders = [];
+    if (email === "all") {
+        // Fetch all orders for admin
+        orders = await Order.find({})
+        .populate({
+          path: 'cartItems',
+          populate: {
+            path: 'productId', // Populate product details
+            model: 'Product', // Assuming 'Product' is the model name
+          },
+        });
+    } else {
+      // Fetch all orders for the given email
+      orders = await Order.find({ email })
+        .populate({
+          path: 'cartItems',
+          populate: {
+            path: 'productId', // Populate product details
+            model: 'Product', // Assuming 'Product' is the model name
+          },
+        });
+    }
+
 
     // if (orders.length === 0) {
     //   return res.status(200).json([]);
@@ -819,8 +834,8 @@ app.get('/orders', async (req, res) => {
     const ordersData = orders.map(order => ({
       orderId: order._id.toString(),
       orderDate: order.createdAt.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      status: order.paymentStatus || 'Pending',
-      estimatedDelivery: calculateEstimatedDelivery(order.createdAt),
+      status: order.status,
+      estimatedDelivery: order.status === "cancelled" ? "NA": calculateEstimatedDelivery(order.createdAt),
       items: order.cartItems.map(cartItem => ({
         id: cartItem.productId._id, // Product ID
         name: cartItem.productId.name, // Product name
@@ -888,6 +903,30 @@ app.post('/favorites/remove', async (req, res) => {
   }
 });
 
+
+app.patch('/orders', async (req, res) => {
+  const { id, status } = req.body;
+
+  if (!id) {
+      return res.status(400).json({ message: "id is required" });
+  }
+
+  try {
+      const updatedOrderItem = await Order.findOneAndUpdate(
+          { _id: id },
+          { $set: { status } },
+          { new: true }
+      );
+
+      if (!updatedOrderItem) {
+          return res.status(404).json({ message: "Order not found" });
+      }
+      res.json(updatedOrderItem);
+  } catch (error) {
+      console.error("Error updating cart item:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
 //cmnt
 // app.post("/order", async (req, res) => {
 //   const { 
@@ -984,6 +1023,7 @@ app.post('/favorites/remove', async (req, res) => {
 //     res.status(500).json({ error: "Internal server error" });
 //   }
 // });
+
 
 
 const PORT = process.env.PORT || 3002;
