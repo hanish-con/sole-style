@@ -58,3 +58,7 @@
   }
 }
 
+body.greyscale {
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
