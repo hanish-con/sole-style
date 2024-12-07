@@ -1,19 +1,31 @@
-import { Moon, Sun } from "lucide-react"
- 
-import { Button } from "@/components/ui/button"
+import { Moon, Sun } from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useTheme } from "@/components/ui/theme-provider"
- 
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/components/ui/theme-provider";
+
 export function ModeToggle() {
-  const { setTheme } = useTheme()
- 
+  const { setTheme } = useTheme();
+  const [isGreyscale, setIsGreyscale] = useState(false);
+
+  // Function to toggle greyscale class on <body>
+  const toggleGreyscale = () => {
+    setIsGreyscale((prev) => !prev);
+    if (!isGreyscale) {
+      document.body.classList.add("greyscale");
+    } else {
+      document.body.classList.remove("greyscale");
+    }
+  };
+
   return (
-    <div style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: "999"}}>
+    <div style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: "999" }}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
@@ -32,8 +44,11 @@ export function ModeToggle() {
           <DropdownMenuItem onClick={() => setTheme("system")}>
             System
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={toggleGreyscale}>
+            {isGreyscale ? "Disable Greyscale" : "Enable Greyscale"}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }
