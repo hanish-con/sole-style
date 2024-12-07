@@ -7,7 +7,7 @@ export default function Home() {
         <div className="home">
             <section className="hero hidden">
                 {/* PNG Designed By niazmorshed from https://pngtree.com/freepng/sneakers-running-fashion-sports-shoe_16213982.html?sol=downref&id=bef */}
-                <img height={"300px"} width={"300px"} className=" hero-image" src="/assets/img/hero.png" />
+                <img height={"300px"} width={"300px"} className=" hero-image" src="/assets/img/hero.png" alt="hero image" />
                 <div className="hero-intro">
                     <h2 className="text-9xl font-bold">Summer Collection</h2>
                     <h2 className="text-5xl mt-4 font-bold">2024</h2>
@@ -22,7 +22,7 @@ export default function Home() {
                     <h2 className="text-xl mt-4 font-bold text-pretty">Grab Upto 50% Off On Selected Sneakers</h2>
                     <Button className="call-to-action mt-8 rounded font-bold hover:bg-violet-600" size={"lg"}>SHOP NOW</Button>
                 </div>
-                <img height={"300px"} width={"300px"} className="hero-image2" src="/assets/img/hero.png" />
+                <img height={"300px"} width={"300px"} className="hero-image2" src="/assets/img/hero.png" alt="hero image" />
             </section>
             <section className="featured">
                 <FeaturedProducts />
