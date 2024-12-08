@@ -15,10 +15,18 @@ import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 dotenv.config();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+
 
 const JWT_SECRET="123456";
 const JWT_EXPIRES_IN="1d";
@@ -28,9 +36,9 @@ const stripe = new Stripe(process.env.API_KEY);
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "hello from app root" });
-});
+// app.get("/", (req, res) => {
+//   res.json({ message: "hello from app root" });
+// });
 
 const verifyToken = (req, res, next) => {
   console.log({ headers: req.headers });
@@ -1062,6 +1070,9 @@ app.post("/send-order-shipment-email", async (req, res) => {
 //   }
 // });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 const PORT = process.env.PORT || 3002;
 
