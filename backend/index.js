@@ -927,6 +927,44 @@ app.patch('/orders', async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
+app.post("/send-order-shipment-email", async (req, res) => {
+  const { orderId } = req.body;
+
+  try {
+    const order = await Order.findOne({ _id: orderId });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    const email = order.email;  
+
+    const mailOptions = {
+      from: 'yashall123321@gmail.com', 
+      to: email, 
+      subject: 'Your Order Has Been Shipped!', 
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <div style="text-align: center; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="color: #4CAF50;">Thank You for Your Order!</h1>
+          </div>
+          <p style="font-size: 16px;">Hello, your order with Order ID: <strong>#${orderId}</strong> has been successfully placed and is now shipped.</p>
+          <p style="font-size: 16px; color: #555;">Thank you for shopping with <strong style="color: #4CAF50;">SoleStyle</strong>!</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Error sending email" });
+  }
+});
+
+
 //cmnt
 // app.post("/order", async (req, res) => {
 //   const { 
