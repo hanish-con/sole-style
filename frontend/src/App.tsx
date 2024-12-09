@@ -25,6 +25,7 @@ import ResetPassword from "./pages/resetpassword";
 import ForgotPassword from "./pages/forgotpassword";
 import { SettingsOrderDetails } from "./pages/userprofile/order/order";
 import SettingsFavoriteProductsPage from "./pages/userprofile/favourites/favourite";
+import AboutUs from "./pages/AboutUs";
 // Stripe
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -64,6 +65,7 @@ function App() {
           <Route path="/category" element={<Category />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
+          <Route path="/about" element={<AboutUs />}></Route>
           <Route path="/checkout" element={
             <Elements stripe={stripePromise}>
               <Checkout />

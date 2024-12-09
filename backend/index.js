@@ -19,6 +19,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { SessionsClient } from "@google-cloud/dialogflow";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -1099,6 +1101,56 @@ app.post("/send-order-shipment-email", async (req, res) => {
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
+
+const serviceAccountPath = process.env.DIALOGFLOW_KEY_PATH;
+
+// Route to handle chatbot queries
+app.post("/chatbot", async (req, res) => {
+  const { query } = req.body;
+
+  if (!query) {
+    return res.status(400).json({ error: "Query cannot be empty" });
+  }
+
+  try {
+    // Create a session client
+    const sessionClient = new SessionsClient({
+      keyFilename: serviceAccountPath,
+    });
+
+    // Generate a unique session ID for the conversation
+    const sessionId = uuidv4();
+
+    // Define the session path
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      "shoezzy-gpxb", // Replace with your Dialogflow project ID
+      sessionId
+    );
+
+    // Build the request payload
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: query,
+          languageCode: "en", // Set the language code (e.g., "en" for English)
+        },
+      },
+    };
+
+    // Send the query to Dialogflow
+    const responses = await sessionClient.detectIntent(request);
+
+    // Extract the bot's response
+    const botResponse = responses[0].queryResult.fulfillmentText;
+
+    res.status(200).json({ response: botResponse });
+  } catch (error) {
+    console.error("Error communicating with Dialogflow:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 const PORT = process.env.PORT || 3002;

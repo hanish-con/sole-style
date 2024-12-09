@@ -9,6 +9,7 @@ import { DataTableSkeleton } from "@/components/layout/table/data-table-skeleton
 import PageContainer from "@/components/layout/page-container";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import Chatbot from "./Chatbot";
 
 
 // interface Product {
@@ -148,6 +149,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
  
   return (
     <PageContainer>
+      <Chatbot/>
       {/* Category Navigation */}
       <Toaster />
       <nav className="w-full border-b md:border-0 rotate-0 scale-100 transition-all dark:-rotate-0 dark:scale-100 ">
