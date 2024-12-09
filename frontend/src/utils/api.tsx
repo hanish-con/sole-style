@@ -1,4 +1,4 @@
-import { Product, UserModel,CartItem } from "@/models/user";
+import { Product, UserModel,CartItem, Contact } from "@/models/user";
 
 export async function registerUser(userData: UserModel) {
     const resp = await fetch("http://localhost:3002/register", {
@@ -427,3 +427,31 @@ export async function createOrder(
         return null;
     }
 }
+
+// api.ts (in the utils or services folder)
+
+export async function sendContactMessage(contactData: { name: string; email: string; message: string }) {
+    try {
+      const response = await fetch('http://localhost:3002/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactData),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Handle success (e.g., show success message)
+        console.log("Message sent successfully:", data.message);
+        return { success: true, message: data.message };
+      } else {
+        // Handle failure (e.g., show error message)
+        console.error("Error:", data.message);
+        return { success: false, message: data.message || "Failed to send message." };
+      }
+    } catch (error) {
+      console.error('Error sending contact message:', error);
+      return { success: false, message: 'An error occurred while sending the message.' };
+    }
+  }
+  

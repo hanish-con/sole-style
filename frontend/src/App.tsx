@@ -20,6 +20,7 @@ import SettingsLayout from "./pages/userprofile/settings";
 import SettingsAccountPage from "./pages/userprofile/account/account";
 import Checkout from "./pages/checkout";
 import Cart from "./pages/cart";
+import Contact from "./pages/contact";
 import ResetPassword from "./pages/resetpassword";
 import ForgotPassword from "./pages/forgotpassword";
 import { SettingsOrderDetails } from "./pages/userprofile/order/order";
@@ -62,6 +63,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetails />}></Route>
           <Route path="/category" element={<Category />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
+          <Route path="/contact" element={<Contact />}></Route>
           <Route path="/checkout" element={
             <Elements stripe={stripePromise}>
               <Checkout />

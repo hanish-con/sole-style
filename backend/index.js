@@ -8,6 +8,7 @@ import { Category } from "./models/CategoryModel.js";
 import { Cart } from "./models/CartModel.js";
 import {Review} from "./models/ReviewModel.js";
 import {Order} from "./models/OrderModel.js";
+import {Contact} from "./models/ContactModel.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import axios from 'axios';
@@ -564,6 +565,32 @@ app.post('/user-details', async (req, res) => {
   return res.json(user);
 });
 
+
+app.get('/contact', async (req, res) => {
+  console.log("contact us page called.");
+  
+});
+
+app.post('/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    
+    // Validate data
+    if (!name || !email || !message) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Save the contact message to the database
+    const newContact = new Contact({ name, email, message });
+    await newContact.save();
+
+    // Respond with a success message
+    res.status(201).json({ message: 'Message sent successfully' });
+  } catch (error) {
+    console.error('Error handling contact form:', error);
+    res.status(500).json({ message: 'An error occurred while sending the message' });
+  }
+});
 // //order table API
 // app.post("/order", async (req, res) => {
 //   try {
