@@ -577,6 +577,7 @@ app.post('/contact', async (req, res) => {
     
     const { name, email, message } = req.body;
 console.log(name);
+    console.log(email);
     
     // Validate data
     if (!name || !email || !message) {
