@@ -574,7 +574,7 @@ app.get('/contact', async (req, res) => {
 });
 
 app.post('/contact', async (req, res) => {
-  try {
+  try {    
     const { name, email, message } = req.body;
     
     // Validate data
